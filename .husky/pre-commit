@@ -2,4 +2,4 @@
 . "$(dirname "$0")/_/husky.sh"
 
 echo '🔃 Format Code'
-husky run --name task-name
+dotnet format style
