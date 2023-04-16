@@ -1,9 +1,13 @@
-version: "3"
+version: '3.4'
+
 services:
-  app:
-    container_name: foodpool_backend
-    build:
-      context: .
-      dockerfile: Dockerfile
+  db:
+    container_name: database
+    image: postgres
+    restart: always
     ports:
-      - 3000:5000
+      - 5432:5432 
+    environment:
+      POSTGRES_DB: foodpool
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: qwerty
