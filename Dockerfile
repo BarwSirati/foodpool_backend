@@ -4,7 +4,7 @@ WORKDIR /app
 EXPOSE $PORT
 
 ENV ASPNETCORE_URLS=http://+:${PORT}
-ENV ConnectionStrings__PostgreSQLConnection="Server=db;Port=5432;Database=foodpool;User Id=postgres;Password=qwerty"
+ENV ConnectionStrings__PostgreSQLConnection="Server=db;Port=5432;Database=foodpool;User Id=postgres;Password=qqwweerrttyyuuiioopp"
 ENV secretKey=nhh7m^PsCE!2dLzj!%R$C4@RDyr3Es
 
 RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app

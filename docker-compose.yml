@@ -1,13 +1,18 @@
-version: '3.4'
+version: "3.4"
 
 services:
-  db:
-    container_name: database
-    image: postgres
+  api:
+    container_name: foodpool_api
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
     ports:
-      - 5432:5432 
-    environment:
-      POSTGRES_DB: foodpool
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: qwerty
+      - 80:8081
+    networks:
+      - foodpool_database
+
+networks:
+  foodpool_database:
+    name: database_default
+    driver: bridge
