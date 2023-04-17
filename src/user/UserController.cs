@@ -1,6 +1,8 @@
 using FluentResults;
+using FoodPool.provider.interfaces;
 using FoodPool.user.dtos;
 using FoodPool.user.interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoodPool.user;
@@ -10,10 +12,12 @@ namespace FoodPool.user;
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly IHttpContextProvider _contextProvider;
 
-    public UserController(IUserService userService)
+    public UserController(IUserService userService, IHttpContextProvider contextProvider)
     {
         _userService = userService;
+        _contextProvider = contextProvider;
     }
 
     [HttpGet]
@@ -24,8 +28,10 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
+    [Authorize]
     public async Task<ActionResult<GetUserDto>> GetById(int id)
     {
+        if (_contextProvider.GetCurrentUser() != id) return Unauthorized();
         var user = await _userService.GetById(id);
         if (user.Value is null) return NotFound();
         return Ok(user.Value);
