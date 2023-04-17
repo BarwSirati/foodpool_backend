@@ -41,7 +41,7 @@ public class AuthService : IAuthService
         var credential = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         if (credential == null) throw new ArgumentNullException(nameof(credential));
         var token = new JwtSecurityToken(claims: claim, expires: DateTime.UtcNow.AddDays(7),
-            signingCredentials: credential);
+            signingCredentials: credential, issuer: _configuration["issuer"], audience: _configuration["audience"]);
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
