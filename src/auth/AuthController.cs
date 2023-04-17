@@ -10,18 +10,29 @@ namespace FoodPool.auth;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
-    private readonly IUserService _userService;
 
-    public AuthController(IUserService userService, IAuthService authService)
+    public AuthController(IAuthService authService)
     {
-        _userService = userService;
         _authService = authService;
     }
 
     [HttpPost("login")]
     public async Task<ActionResult<TokenDto>> Login(LoginDto loginDto)
     {
-        
+        var token = await _authService.Login(loginDto);
+        if (token.IsFailed)
+        {
+            switch (token.Reasons[0].Message)
+            {
+                case "400":
+                    return BadRequest();
+                case "403":
+                    return Forbid();
+                default:
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         return Ok();
     }
 }
