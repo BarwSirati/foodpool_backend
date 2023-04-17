@@ -1,5 +1,14 @@
+using System.Text;
+using FoodPool.auth;
+using FoodPool.auth.interfaces;
 using FoodPool.data;
+using FoodPool.provider;
+using FoodPool.provider.interfaces;
+using FoodPool.user;
+using FoodPool.user.interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +19,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Map Repository with Interface
+builder.Services.AddTransient<IUserRepository, UserRepository>();
+
+//Map Service with Interface
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IHttpContextProvider, HttpContextProvider>();
+
 //Add AutoMapper
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
@@ -18,6 +35,25 @@ builder.Services.AddDbContext<FoodpoolDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection"));
 });
+
+//Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["secretKey"]!))
+    };
+});
+
+//Context aka req.user
+builder.Services.AddHttpContextAccessor();
+
+// Add Authorization
+builder.Services.AddAuthorization();
 
 //Cors
 const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -38,6 +74,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors(myAllowSpecificOrigins);
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
