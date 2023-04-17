@@ -27,14 +27,15 @@ public class UserRepository : IUserRepository
         return user!;
     }
 
-    public Task<User> GetByUsername(string username)
+    public async Task<User> GetByUsername(string username)
     {
-        throw new NotImplementedException();
+        var user = await _dbContext.User.FirstOrDefaultAsync(u => u.Username == username);
+        return user!;
     }
 
     public void Insert(User user)
     {
-        throw new NotImplementedException();
+       _dbContext.User.AddAsync(user);
     }
 
     public void Update(UpdateUserDto updateUserDto, int id)
