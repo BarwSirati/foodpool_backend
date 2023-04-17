@@ -1,3 +1,5 @@
+using FoodPool.auth;
+using FoodPool.auth.interfaces;
 using FoodPool.data;
 using FoodPool.user;
 using FoodPool.user.interfaces;
@@ -17,6 +19,7 @@ builder.Services.AddTransient<IUserRepository, UserRepository>();
 
 //Map Service with Interface
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 //Add AutoMapper
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
