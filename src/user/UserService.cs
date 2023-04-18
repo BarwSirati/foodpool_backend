@@ -58,7 +58,17 @@ public class UserService : IUserService
         try
         {
             if (!_userRepository.ExistById(id)) return Result.Fail(new Error("404"));
-            updateUserDto.Password = BCrypt.Net.BCrypt.HashPassword(updateUserDto.Password);
+            if (updateUserDto.Password != "")
+            {
+                updateUserDto.Password = BCrypt.Net.BCrypt.HashPassword(updateUserDto.Password);
+            }
+            else
+            {
+                var getUser = await _userRepository.GetById(id);
+                updateUserDto.Password = getUser.Password;
+            }
+
+
             _userRepository.Update(updateUserDto, id);
             _userRepository.Save();
             var user = await GetById(id);
