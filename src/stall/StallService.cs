@@ -3,7 +3,6 @@ using FluentResults;
 using FoodPool.stall.dtos;
 using FoodPool.stall.entities;
 using FoodPool.stall.interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace FoodPool.stall;
 
@@ -44,13 +43,27 @@ public class StallService : IStallService
         }
     }
 
-    public Task<Result<GetStallDto>> Update(UpdateStallDto updateStallDto, int id)
+    public async Task<Result<GetStallDto>> Update(UpdateStallDto updateStallDto, int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            if (!_stallRepository.ExistById(id)) return Result.Fail(new Error("404"));
+            _stallRepository.Update(updateStallDto, id);
+            _stallRepository.Save();
+            var stall = await GetById(id);
+            return Result.Ok(stall.Value);
+        }
+        catch (Exception)
+        {
+            return Result.Fail(new Error("400"));
+        }
     }
 
     public Task<Result> Delete(int id)
     {
-        throw new NotImplementedException();
+        if (!_stallRepository.ExistById(id)) return Task.FromResult(Result.Fail(new Error("404")));
+        _stallRepository.Delete(id);
+        _stallRepository.Save();
+        return Task.FromResult(Result.Ok());
     }
 }

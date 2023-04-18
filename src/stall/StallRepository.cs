@@ -43,9 +43,15 @@ public class StallRepository : IStallRepository
         _dbContext.SaveChanges();
     }
 
+    public bool ExistById(int id)
+    {
+        return _dbContext.Stall.Any(s => s.Id == id);
+    }
+
     public void Update(UpdateStallDto updateStallDto, int id)
     {
         var stall = GetById(id).Result;
         stall.Name = updateStallDto.Name;
     }
+    
 }

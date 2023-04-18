@@ -11,4 +11,5 @@ public interface IStallRepository
     void Update(UpdateStallDto updateStallDto, int id);
     void Delete(int id);
     void Save();
+    bool ExistById(int id);
 }
