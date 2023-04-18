@@ -53,5 +53,4 @@ public class StallRepository : IStallRepository
         var stall = GetById(id).Result;
         stall.Name = updateStallDto.Name;
     }
-    
 }
