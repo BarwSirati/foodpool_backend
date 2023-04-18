@@ -47,6 +47,13 @@ public class UserService : IUserService
         return Result.Ok(_mapper.Map<GetUserDto>(user));
     }
 
+    public async Task<Result<GetUserDto>> GetCurrent(int id)
+    {
+        if (!_userRepository.ExistById(id)) return Result.Fail(new Error("404"));
+        var user = await _userRepository.GetById(id);
+        return Result.Ok(_mapper.Map<GetUserDto>(user));
+    }
+
     public async Task<Result<GetUserDto>> Update(UpdateUserDto updateUserDto, int id)
     {
         try

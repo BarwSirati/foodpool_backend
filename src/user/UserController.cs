@@ -37,6 +37,26 @@ public class UserController : ControllerBase
         return Ok(user.Value);
     }
 
+    [HttpGet("current")]
+    [Authorize]
+    public async Task<ActionResult<GetUserDto>> GetCurrent()
+    {
+        var id = _contextProvider.GetCurrentUser();
+        var user = await _userService.GetCurrent(id);
+        if (user.IsFailed)
+        {
+            switch (user.Reasons[0].Message)
+            {
+                case "404":
+                    return NotFound();
+                default:
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        return Ok(user.Value);
+    }
+
     [HttpPut("{id:int}")]
     public async Task<ActionResult<GetUserDto>> Update(int id, UpdateUserDto updateUserDto)
     {
