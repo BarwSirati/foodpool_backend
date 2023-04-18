@@ -1,7 +1,6 @@
 using FoodPool.provider.interfaces;
 using FoodPool.stall.dtos;
 using FoodPool.stall.interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoodPool.stall;
@@ -52,4 +51,31 @@ public class StallController : ControllerBase
         return Ok();
     }
 
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<GetStallDto>> Update(UpdateStallDto updateStallDto, int id)
+    {
+        var stall = await _stallService.Update(updateStallDto, id);
+        if (stall.IsFailed)
+        {
+            switch (stall.Reasons[0].Message)
+            {
+                case "404":
+                    return NotFound();
+                case "400":
+                    return BadRequest();
+                default:
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        return Ok(stall.Value);
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> Delete(int id)
+    {
+        var stall = await _stallService.Delete(id);
+        if (stall.IsFailed) return BadRequest();
+        return Ok();
+    }
 }
