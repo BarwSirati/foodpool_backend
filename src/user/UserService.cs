@@ -3,7 +3,6 @@ using FluentResults;
 using FoodPool.user.dtos;
 using FoodPool.user.entities;
 using FoodPool.user.interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace FoodPool.user;
 

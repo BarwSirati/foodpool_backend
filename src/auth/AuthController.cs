@@ -2,7 +2,6 @@ using FoodPool.auth.dtos;
 using FoodPool.auth.interfaces;
 using FoodPool.user.dtos;
 using FoodPool.user.interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoodPool.auth;
