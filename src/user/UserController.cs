@@ -1,4 +1,3 @@
-using FluentResults;
 using FoodPool.provider.interfaces;
 using FoodPool.user.dtos;
 using FoodPool.user.interfaces;

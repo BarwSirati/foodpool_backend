@@ -3,7 +3,6 @@ using FluentResults;
 using FoodPool.user.dtos;
 using FoodPool.user.entities;
 using FoodPool.user.interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace FoodPool.user;
 
@@ -68,8 +67,7 @@ public class UserService : IUserService
                 var getUser = await _userRepository.GetById(id);
                 updateUserDto.Password = getUser.Password;
             }
-
-
+            
             _userRepository.Update(updateUserDto, id);
             _userRepository.Save();
             var user = await GetById(id);
