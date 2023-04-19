@@ -79,6 +79,7 @@ public class UserController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> Delete(int id)
     {
         var user = await _userService.Delete(id);

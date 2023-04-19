@@ -1,6 +1,7 @@
 using FoodPool.provider.interfaces;
 using FoodPool.stall.dtos;
 using FoodPool.stall.interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoodPool.stall;
@@ -34,6 +35,7 @@ public class StallController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> Create(CreateStallDto createStallDto)
     {
         var stall = await _stallService.Create(createStallDto);
@@ -52,6 +54,7 @@ public class StallController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<GetStallDto>> Update(UpdateStallDto updateStallDto, int id)
     {
         var stall = await _stallService.Update(updateStallDto, id);
@@ -72,6 +75,7 @@ public class StallController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> Delete(int id)
     {
         var stall = await _stallService.Delete(id);
