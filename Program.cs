@@ -9,7 +9,6 @@ using FoodPool.provider.interfaces;
 using FoodPool.stall;
 using FoodPool.stall.interfaces;
 using FoodPool.user;
-using FoodPool.user.enums;
 using FoodPool.user.interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
