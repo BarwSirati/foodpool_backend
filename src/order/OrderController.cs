@@ -1,6 +1,7 @@
+using Microsoft.AspNetCore.Mvc;
+
 namespace FoodPool.order;
 
-public class OrderController
+public class OrderController : ControllerBase
 {
-    
 }
