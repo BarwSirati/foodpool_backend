@@ -28,10 +28,4 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.27.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="src\order\dtos\" />
-    <Folder Include="src\order\interfaces\" />
-    <Folder Include="src\order\mapper\" />
-  </ItemGroup>
-
 </Project>
