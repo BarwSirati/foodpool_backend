@@ -1,6 +1,5 @@
 using FoodPool.provider.interfaces;
 using FoodPool.user.dtos;
-using FoodPool.user.enums;
 using FoodPool.user.interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
