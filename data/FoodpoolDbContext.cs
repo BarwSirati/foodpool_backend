@@ -1,3 +1,4 @@
+using FoodPool.order.entities;
 using FoodPool.user.entities;
 using FoodPool.stall.entities;
 using Microsoft.EntityFrameworkCore;
@@ -12,4 +13,5 @@ public class FoodpoolDbContext : DbContext
 
     public DbSet<User> User => Set<User>();
     public DbSet<Stall> Stall => Set<Stall>();
+    public DbSet<Order> Order => Set<Order>();
 }
