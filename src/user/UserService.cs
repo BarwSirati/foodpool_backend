@@ -17,20 +17,20 @@ public class UserService : IUserService
         _mapper = mapper;
     }
 
-    public async Task<Result> Create(CreateUserDto createUserDto)
+    public Task<Result> Create(CreateUserDto createUserDto)
     {
         try
         {
-            if (_userRepository.Exist(createUserDto.Username!)) return Result.Fail(new Error("409"));
+            if (_userRepository.Exist(createUserDto.Username!)) return Task.FromResult(Result.Fail(new Error("409")));
             var user = _mapper.Map<User>(createUserDto);
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
             _userRepository.Insert(user);
             _userRepository.Save();
-            return Result.Ok();
+            return Task.FromResult(Result.Ok());
         }
         catch (Exception)
         {
-            return Result.Fail(new Error("400"));
+            return Task.FromResult(Result.Fail(new Error("400")));
         }
     }
 

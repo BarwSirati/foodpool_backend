@@ -28,18 +28,18 @@ public class StallService : IStallService
         return Result.Ok(_mapper.Map<GetStallDto>(stall));
     }
 
-    public async Task<Result> Create(CreateStallDto createStallDto)
+    public Task<Result> Create(CreateStallDto createStallDto)
     {
         try
         {
             var stall = _mapper.Map<Stall>(createStallDto);
             _stallRepository.Insert(stall);
             _stallRepository.Save();
-            return Result.Ok();
+            return Task.FromResult(Result.Ok());
         }
         catch (Exception)
         {
-            return Result.Fail(new Error("400"));
+            return Task.FromResult(Result.Fail(new Error("400")));
         }
     }
 

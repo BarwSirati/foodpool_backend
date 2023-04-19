@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using FoodPool.provider.interfaces;
 
 namespace FoodPool.provider;
@@ -13,7 +15,7 @@ public class HttpContextProvider : IHttpContextProvider
 
     public int GetCurrentUser()
     {
-        var id = _httpContextAccessor.HttpContext?.User.FindFirst("userId")?.Value;
+        var id = _httpContextAccessor.HttpContext?.User.FindFirstValue(JwtRegisteredClaimNames.Sub);
         return !int.TryParse(id, out var userId) ? 0 : userId;
     }
 }

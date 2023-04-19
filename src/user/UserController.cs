@@ -1,5 +1,6 @@
 using FoodPool.provider.interfaces;
 using FoodPool.user.dtos;
+using FoodPool.user.enums;
 using FoodPool.user.interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<List<GetUserDto>>> GetAll()
     {
         var users = await _userService.GetAll();

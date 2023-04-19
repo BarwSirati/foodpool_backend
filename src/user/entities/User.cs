@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using FoodPool.user.enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace FoodPool.user.entities;
@@ -13,7 +14,7 @@ public class User
     public string? Username { get; set; }
     public string? Password { get; set; }
 
-    [DefaultValue(0)] public int Point { get; set; }
+    public int Point { get; set; } = 0;
 
     [StringLength(10)]
     [MaxLength(10)]
@@ -21,4 +22,6 @@ public class User
     public string? Tel { get; set; }
 
     public string? Line { get; set; }
+
+    public Role Role { get; set; } = Role.User;
 }

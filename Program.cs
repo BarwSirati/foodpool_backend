@@ -7,6 +7,7 @@ using FoodPool.provider.interfaces;
 using FoodPool.stall;
 using FoodPool.stall.interfaces;
 using FoodPool.user;
+using FoodPool.user.enums;
 using FoodPool.user.interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -75,6 +76,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+Console.WriteLine(Role.User.ToString());
 
 app.UseHttpsRedirection();
 app.UseCors(myAllowSpecificOrigins);
