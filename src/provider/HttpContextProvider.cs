@@ -15,7 +15,7 @@ public class HttpContextProvider : IHttpContextProvider
 
     public int GetCurrentUser()
     {
-        var id = _httpContextAccessor.HttpContext?.User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        var id = _httpContextAccessor.HttpContext?.User.FindFirstValue("userId");
         return !int.TryParse(id, out var userId) ? 0 : userId;
     }
 }

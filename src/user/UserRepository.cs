@@ -35,7 +35,7 @@ public class UserRepository : IUserRepository
 
     public void Insert(User user)
     {
-       _dbContext.User.AddAsync(user);
+        _dbContext.User.AddAsync(user);
     }
 
     public void Update(UpdateUserDto updateUserDto, int id)
