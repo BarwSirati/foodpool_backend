@@ -1,30 +1,25 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FoodPool.user.dtos;
+using FoodPool.stall.dtos;
 
 namespace FoodPool.post.dtos;
 
 public class GetPostDto
 {
-    [Required]
+
     public int Id { get; set; }
-    
-    [Required]
-    public int User { get; set; }
-    
-    [Required]
-    public int Stall { get; set; }
-    
-    [Required]
+
+    public GetUserDto User { get; set; }
+
+    public GetStallDto Stall { get; set; }
+
     public string? MenuName { get; set; }
-    
+
     public string? Description { get; set; }
-    
-    [Required]
+
     public int PostStatus { get; set; }
-    
-    [Required]
+
     public int TypePost { get; set; }
-    
-    [Required]
+
     public int? LimitOrder { get; set; }
-    
+
 }

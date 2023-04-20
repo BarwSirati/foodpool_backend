@@ -1,6 +1,7 @@
 ﻿using FoodPool.data;
 using FoodPool.post.entities;
 using FoodPool.post.interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace FoodPool.post;
 
@@ -13,9 +14,15 @@ public class PostRepository :IPostRepository
         _dbContext = dbContext;
     }
 
+    public async Task<List<Post>> GetAll()
+    {
+        var post = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall).ToListAsync();
+        return post;
+    }
+
     public void Insert(Post post)
     {
-       
+        _dbContext.Post.Add(post);
     }
 
     public void Save()

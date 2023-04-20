@@ -9,8 +9,7 @@ public class PostMapper : Profile
     public PostMapper()
     {
         CreateMap<Post,GetPostDto>();
-        CreateMap<GetPostDto,Post>();
-        CreateMap<GetPostDto,Post>();
+        CreateMap<CreatePostDto,Post>();
         
     }
     

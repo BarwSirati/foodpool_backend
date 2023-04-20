@@ -24,4 +24,10 @@ public class PostController : ControllerBase
         var post = await _postService.Create(createPostDto);
         return Ok();
     }
+
+    [HttpGet]
+    public async Task<ActionResult<List<GetPostDto>>> GetAllPost(){
+        var post = await _postService.GetAll();
+        return Ok(post.Value);
+    }
 }
