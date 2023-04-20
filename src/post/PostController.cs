@@ -1,4 +1,5 @@
-﻿using FoodPool.post.interfaces;
+﻿using FoodPool.post.dtos;
+using FoodPool.post.interfaces;
 using FoodPool.provider.interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,8 +19,9 @@ public class PostController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> Create()
+    public async Task<ActionResult> Create(CreatePostDto createPostDto)
     {
+        var post = await _postService.Create(createPostDto);
         return Ok();
     }
 }
