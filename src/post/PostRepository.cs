@@ -16,8 +16,13 @@ public class PostRepository :IPostRepository
 
     public async Task<List<Post>> GetAll()
     {
-        var post = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall).ToListAsync();
-        return post;
+        var posts = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall).ToListAsync();
+        return posts;
+    }
+
+    public async Task<List<Post>> GetByUserId(int userId){
+        var posts = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall).ToListAsync();
+        return posts;
     }
     public async Task<Post> GetById(int id)
     {

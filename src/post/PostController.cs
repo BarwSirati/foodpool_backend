@@ -27,8 +27,8 @@ public class PostController : ControllerBase
 
     [HttpGet]
     public async Task<ActionResult<List<GetPostDto>>> GetAllPost(){
-        var post = await _postService.GetAll();
-        return Ok(post.Value);
+        var posts = await _postService.GetAll();
+        return Ok(posts.Value);
     }
 
     [HttpGet("{id:int}")]
@@ -36,5 +36,11 @@ public class PostController : ControllerBase
         var post = await _postService.GetById(id);
         if(post.Value is null) return NotFound();
         return Ok(post.Value);
+    }
+
+    [HttpGet("user/{id:int}")]
+    public async Task<ActionResult<List<GetPostDto>>> GetPostByUserId(int userId){
+        var posts = await _postService.GetByUserId(userId);
+        return Ok(posts.Value);
     }
 }
