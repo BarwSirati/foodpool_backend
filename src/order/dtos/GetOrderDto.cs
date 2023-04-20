@@ -1,6 +1,5 @@
 using FoodPool.order.enums;
 using FoodPool.user.dtos;
-
 namespace FoodPool.order.dtos;
 
 public class GetOrderDto

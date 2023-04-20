@@ -7,6 +7,7 @@ namespace FoodPool.order.interfaces;
 public interface IOrderService
 {
     Task<Result> Create(CreateOrderDto createOrderDto);
-    Task<Result<GetOrderDto>> GetOrderById(int id);
-    Task<Result<List<GetOrderDto>>> GetOrderByPostId(int id);
+    Task<Result<GetOrderDto>> GetById(int id);
+     Task<Result<List<GetOrderDto>>> GetByUserId(int userId);
+    Task<Result<List<GetOrderDto>>> GetByPostId(int id);
 }
