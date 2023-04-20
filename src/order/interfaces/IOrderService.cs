@@ -10,5 +10,5 @@ public interface IOrderService
     Task<Result<GetOrderDto>> GetById(int id);
     Task<Result<List<GetOrderDto>>> GetByUserId(int userId);
     Task<Result<List<GetOrderDto>>> GetByPostId(int id);
-    Task<Result<GetOrderDto>> UpdateById(UpdateOrderDto updateOrderDto, int id);
+    Task<Result<GetOrderDto>> UpdateById(UpdateOrderDto updateOrderDto, int id, int userId);
 }

@@ -9,7 +9,7 @@ public interface IUserRepository
     Task<User> GetById(int id);
     Task<User> GetByUsername(string username);
     void Insert(User user);
-    void Update(UpdateUserDto updateUserDto, int id);
+    void Update(UpdateUserDto user, int id);
     void Delete(int id);
     bool Exist(string username);
     bool ExistById(int id);

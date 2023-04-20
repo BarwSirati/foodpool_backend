@@ -2,6 +2,7 @@ using AutoMapper;
 using FluentResults;
 using FoodPool.order.dtos;
 using FoodPool.order.entities;
+using FoodPool.order.enums;
 using FoodPool.order.interfaces;
 using FoodPool.user.interfaces;
 
@@ -56,11 +57,13 @@ public class OrderService : IOrderService
         return Result.Ok(orders.Select(order => _mapper.Map<GetOrderDto>(order)).ToList());
     }
 
-    public async Task<Result<GetOrderDto>> UpdateById(UpdateOrderDto updateOrderDto, int id)
+    public async Task<Result<GetOrderDto>> UpdateById(UpdateOrderDto updateOrderDto, int id,int userId)
     {
         try
         {
             if (!_orderRepository.ExistById(id)) return Result.Fail(new Error("404"));
+            var findOrder = await _orderRepository.GetById(id);
+
             _orderRepository.Update(updateOrderDto, id);
             _orderRepository.Save();
             var order = await GetById(id);
