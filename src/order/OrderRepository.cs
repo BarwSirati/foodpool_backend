@@ -20,6 +20,12 @@ public class OrderRepository : IOrderRepository
         return order!;
     }
 
+    public async Task<List<Order>> GetOrderByPostId(int postId)
+    {
+        var orders = await _dbContext.Order.Include(o => o.User).Where(o => o.PostId == postId).ToListAsync();
+        return orders;
+    }
+
     public void Insert(Order order)
     {
         _dbContext.Order.Add(order);

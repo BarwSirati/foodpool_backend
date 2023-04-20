@@ -36,4 +36,10 @@ public class OrderService : IOrderService
         var order = await _orderRepository.GetOrderById(id);
         return _mapper.Map<GetOrderDto>(order);
     }
+
+    public async Task<Result<List<GetOrderDto>>> GetOrderByPostId(int id)
+    {
+        var orders = await _orderRepository.GetOrderByPostId(id);
+        return Result.Ok(orders.Select(order => _mapper.Map<GetOrderDto>(order)).ToList());
+    }
 }

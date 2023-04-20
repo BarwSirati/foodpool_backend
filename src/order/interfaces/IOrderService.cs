@@ -8,4 +8,5 @@ public interface IOrderService
 {
     Task<Result> Create(CreateOrderDto createOrderDto);
     Task<Result<GetOrderDto>> GetOrderById(int id);
+    Task<Result<List<GetOrderDto>>> GetOrderByPostId(int id);
 }

@@ -27,6 +27,14 @@ public class OrderController : ControllerBase
         return Ok(order.Value);
     }
 
+    [HttpGet("post/{id:int}")]
+    [Authorize]
+    public async Task<ActionResult<List<GetOrderDto>>> GetOrderByPostId(int id)
+    {
+        var orders = await _orderService.GetOrderByPostId(id);
+        return Ok(orders.Value);
+    }
+
     [HttpPost]
     [Authorize]
     public async Task<ActionResult> Create(CreateOrderDto createOrderDto)
