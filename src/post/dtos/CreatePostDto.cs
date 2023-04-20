@@ -5,10 +5,10 @@ namespace FoodPool.post.dtos;
 public class CreatePostDto
 {
     [Required]
-    public int? User { get; set; }
+    public int? UserId { get; set; }
     
     [Required]
-    public int? Stall { get; set; }
+    public int? StallId { get; set; }
     
     [Required]
     public string? MenuName { get; set; }

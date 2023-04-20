@@ -2,6 +2,8 @@ using System.Text;
 using FoodPool.auth;
 using FoodPool.auth.interfaces;
 using FoodPool.data;
+using FoodPool.post;
+using FoodPool.post.interfaces;
 using FoodPool.provider;
 using FoodPool.provider.interfaces;
 using FoodPool.stall;
@@ -25,11 +27,13 @@ builder.Services.AddSwaggerGen();
 //Map Repository with Interface
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IStallRepository, StallRepository>();
+builder.Services.AddTransient<IPostRepository, PostRepository>();
 
 //Map Service with Interface
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IStallService, StallService>(); 
+builder.Services.AddScoped<IStallService, StallService>();
+builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IHttpContextProvider, HttpContextProvider>();
 
 //Add AutoMapper
