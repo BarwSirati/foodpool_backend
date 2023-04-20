@@ -2,6 +2,7 @@ using FoodPool.data;
 using FoodPool.order.entities;
 using FoodPool.order.interfaces;
 using Microsoft.EntityFrameworkCore;
+using FoodPool.order.dtos;
 
 namespace FoodPool.order;
 
@@ -30,6 +31,17 @@ public class OrderRepository : IOrderRepository
     {
         var orders = await _dbContext.Order.Include(o => o.User).Where(o => o.User!.Id == userId).ToListAsync();
         return orders;
+    }
+
+    public bool ExistById(int id)
+    {
+        return _dbContext.Order.Any(order => order.Id == id);
+    }
+
+    public void Update(UpdateOrderDto updateOrderDto, int id)
+    {
+        var order = GetById(id).Result;
+        order.Status = updateOrderDto.Status;
     }
 
     public void Insert(Order order)

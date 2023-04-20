@@ -1,12 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using FoodPool.order.enums;
 
 namespace FoodPool.order.dtos;
 
 public class UpdateOrderDto
 {
-    [Required] public int PostId { get; set; }
-    [Required] public int UserId { get; set; }
-    [Required] public string? MenuName { get; set; }
-    [Required] public string? Location { get; set; }
-    [Required] public string? Note { get; set; }
+    [Required] public OrderStatus Status { get; set; }
 }

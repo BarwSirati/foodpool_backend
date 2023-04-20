@@ -47,12 +47,28 @@ public class OrderService : IOrderService
     public async Task<Result<List<GetOrderDto>>> GetByUserId(int userId)
     {
         var orders = await _orderRepository.GetByUserId(userId);
-        return Result.Ok(orders.Select(order =>_mapper.Map<GetOrderDto>(order)).ToList());
+        return Result.Ok(orders.Select(order => _mapper.Map<GetOrderDto>(order)).ToList());
     }
 
     public async Task<Result<List<GetOrderDto>>> GetByPostId(int postId)
     {
         var orders = await _orderRepository.GetByPostId(postId);
         return Result.Ok(orders.Select(order => _mapper.Map<GetOrderDto>(order)).ToList());
+    }
+
+    public async Task<Result<GetOrderDto>> UpdateById(UpdateOrderDto updateOrderDto, int id)
+    {
+        try
+        {
+            if (!_orderRepository.ExistById(id)) return Result.Fail(new Error("404"));
+            _orderRepository.Update(updateOrderDto, id);
+            _orderRepository.Save();
+            var order = await GetById(id);
+            return Result.Ok(order.Value);
+        }
+        catch (Exception)
+        {
+            return Result.Fail(new Error("400"));
+        }
     }
 }

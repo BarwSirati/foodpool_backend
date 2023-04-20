@@ -28,23 +28,23 @@ public class OrderController : ControllerBase
         return Ok(order.Value);
     }
 
-     [HttpGet("user/{id:int}")]
-     [Authorize]
-     public async Task<ActionResult<List<GetOrderDto>>> GetByUserId(int id)
-     {
-         var orders = await _orderService.GetByUserId(id);
-         if (orders.Value is null) return NotFound();
-         return Ok(orders.Value);
+    [HttpGet("user/{id:int}")]
+    [Authorize]
+    public async Task<ActionResult<List<GetOrderDto>>> GetByUserId(int id)
+    {
+        var orders = await _orderService.GetByUserId(id);
+        if (orders.Value is null) return NotFound();
+        return Ok(orders.Value);
     }
-     
-     [HttpGet("post/{id:int}")]
-     [Authorize]
-     public async Task<ActionResult<List<GetOrderDto>>> GetByPostId(int id)
-     {
-         var orders = await _orderService.GetByPostId(id);
-         if (orders.Value is null) return NotFound();
-         return Ok(orders.Value);
-     }
+
+    [HttpGet("post/{id:int}")]
+    [Authorize]
+    public async Task<ActionResult<List<GetOrderDto>>> GetByPostId(int id)
+    {
+        var orders = await _orderService.GetByPostId(id);
+        if (orders.Value is null) return NotFound();
+        return Ok(orders.Value);
+    }
 
     [HttpPost]
     [Authorize]
@@ -66,5 +66,12 @@ public class OrderController : ControllerBase
         }
 
         return Ok();
+    }
+
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<UpdateOrderDto>> UpdateById(UpdateOrderDto updateOrderDto, int id)
+    {
+        var order = await _orderService.UpdateById(updateOrderDto, id);
+        return Ok(order.Value);
     }
 }
