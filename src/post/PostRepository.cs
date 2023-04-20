@@ -19,6 +19,11 @@ public class PostRepository :IPostRepository
         var post = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall).ToListAsync();
         return post;
     }
+    public async Task<Post> GetById(int id)
+    {
+        var post = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall).FirstOrDefaultAsync(o => o.Id == id);
+        return post!;
+    }
 
     public void Insert(Post post)
     {

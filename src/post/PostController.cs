@@ -30,4 +30,11 @@ public class PostController : ControllerBase
         var post = await _postService.GetAll();
         return Ok(post.Value);
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<GetPostDto>> GetPostById(int id){
+        var post = await _postService.GetById(id);
+        if(post.Value is null) return NotFound();
+        return Ok(post.Value);
+    }
 }

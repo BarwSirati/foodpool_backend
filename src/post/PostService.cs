@@ -36,4 +36,10 @@ public class PostService : IPostService
         return Result.Ok(posts.Select(post => _mapper.Map<GetPostDto>(post)).ToList());
     }
 
+    public async Task<Result<GetPostDto>> GetById(int id)
+    {
+        var post = await _postRepository.GetById(id);
+        return Result.Ok(_mapper.Map<GetPostDto>(post));
+    }
+
 }
