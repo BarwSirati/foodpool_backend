@@ -20,7 +20,6 @@ public class OrderService : IOrderService
         _mapper = mapper;
         _userRepository = userRepository;
     }
-
     public Task<Result> Create(CreateOrderDto createOrderDto)
     {
         try
@@ -38,6 +37,7 @@ public class OrderService : IOrderService
             return Task.FromResult(Result.Fail(new Error("400")));
         }
     }
+
 
     public async Task<Result<GetOrderDto>> GetById(int id)
     {
@@ -57,13 +57,13 @@ public class OrderService : IOrderService
         return Result.Ok(orders.Select(order => _mapper.Map<GetOrderDto>(order)).ToList());
     }
 
-    public async Task<Result<GetOrderDto>> UpdateById(UpdateOrderDto updateOrderDto, int id,int userId)
+    public async Task<Result<GetOrderDto>> UpdateByPostUser(UpdateOrderDto updateOrderDto, int id,int userId)
     {
         try
         {
             if (!_orderRepository.ExistById(id)) return Result.Fail(new Error("404"));
-            var findOrder = await _orderRepository.GetById(id);
-
+            var findOrder = await GetById(id);
+            if (updateOrderDto.Status.CompareTo(findOrder.Value.Status) != 1) return Result.Fail(new Error("403"));
             _orderRepository.Update(updateOrderDto, id);
             _orderRepository.Save();
             var order = await GetById(id);

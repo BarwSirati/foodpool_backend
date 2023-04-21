@@ -68,11 +68,11 @@ public class OrderController : ControllerBase
         return Ok();
     }
 
-    [HttpPut("{id:int}")]
+    [HttpPut("post/{id:int}")]
     [Authorize]
-    public async Task<ActionResult<UpdateOrderDto>> UpdateById(UpdateOrderDto updateOrderDto, int id)
+    public async Task<ActionResult<UpdateOrderDto>> UpdateByPostUser(UpdateOrderDto updateOrderDto, int id)
     {
-        var order = await _orderService.UpdateById(updateOrderDto, id, _contextProvider.GetCurrentUser());
+        var order = await _orderService.UpdateByPostUser(updateOrderDto, id, _contextProvider.GetCurrentUser());
         return Ok(order.Value);
     }
 }

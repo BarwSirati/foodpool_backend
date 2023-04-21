@@ -5,5 +5,7 @@ namespace FoodPool.order.dtos;
 
 public class UpdateOrderDto
 {
-    [Required] public OrderStatus Status { get; set; }
+    [EnumDataType(typeof(OrderStatus))]
+    [Required]
+    public OrderStatus Status { get; set; }
 }

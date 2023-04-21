@@ -10,7 +10,8 @@ public class Order
     public int PostId { get; set; }
     public User? User { get; set; }
     public string? MenuName { get; set; }
-    public OrderStatus Status { get; set; } = OrderStatus.WaitingForConfirmation;
+
+    [EnumDataType(typeof(OrderStatus))] public OrderStatus Status { get; set; } = OrderStatus.WaitingForConfirmation;
     public string? Location { get; set; }
     public string? Note { get; set; }
 }
