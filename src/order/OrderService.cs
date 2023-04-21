@@ -2,6 +2,7 @@ using AutoMapper;
 using FluentResults;
 using FoodPool.order.dtos;
 using FoodPool.order.entities;
+using FoodPool.order.enums;
 using FoodPool.order.interfaces;
 using FoodPool.user.interfaces;
 
@@ -20,26 +21,57 @@ public class OrderService : IOrderService
         _userRepository = userRepository;
     }
 
-    public async Task<Result> Create(CreateOrderDto createOrderDto)
+    public Task<Result> Create(CreateOrderDto createOrderDto)
     {
-        if (!_userRepository.ExistById(createOrderDto.UserId)) return Result.Fail(new Error("404"));
-        var user = await _userRepository.GetById(createOrderDto.UserId);
-        var order = _mapper.Map<Order>(createOrderDto);
-        order.User = user;
-        _orderRepository.Insert(order);
-        _orderRepository.Save();
-        return Result.Ok();
+        try
+        {
+            if (!_userRepository.ExistById(createOrderDto.UserId)) return Task.FromResult(Result.Fail(new Error("404")));
+            var user = _userRepository.GetById(createOrderDto.UserId);
+            var order = _mapper.Map<Order>(createOrderDto);
+            order.User = user.Result;
+            _orderRepository.Insert(order);
+            _orderRepository.Save();
+            return Task.FromResult(Result.Ok());
+        }
+        catch (Exception)
+        {
+            return Task.FromResult(Result.Fail(new Error("400")));
+        }
     }
 
-    public async Task<Result<GetOrderDto>> GetOrderById(int id)
+    public async Task<Result<GetOrderDto>> GetById(int id)
     {
-        var order = await _orderRepository.GetOrderById(id);
+        var order = await _orderRepository.GetById(id);
         return _mapper.Map<GetOrderDto>(order);
     }
 
-    public async Task<Result<List<GetOrderDto>>> GetOrderByPostId(int id)
+    public async Task<Result<List<GetOrderDto>>> GetByUserId(int userId)
     {
-        var orders = await _orderRepository.GetOrderByPostId(id);
+        var orders = await _orderRepository.GetByUserId(userId);
         return Result.Ok(orders.Select(order => _mapper.Map<GetOrderDto>(order)).ToList());
+    }
+
+    public async Task<Result<List<GetOrderDto>>> GetByPostId(int postId)
+    {
+        var orders = await _orderRepository.GetByPostId(postId);
+        return Result.Ok(orders.Select(order => _mapper.Map<GetOrderDto>(order)).ToList());
+    }
+
+    public async Task<Result<GetOrderDto>> UpdateById(UpdateOrderDto updateOrderDto, int id,int userId)
+    {
+        try
+        {
+            if (!_orderRepository.ExistById(id)) return Result.Fail(new Error("404"));
+            var findOrder = await _orderRepository.GetById(id);
+
+            _orderRepository.Update(updateOrderDto, id);
+            _orderRepository.Save();
+            var order = await GetById(id);
+            return Result.Ok(order.Value);
+        }
+        catch (Exception)
+        {
+            return Result.Fail(new Error("400"));
+        }
     }
 }

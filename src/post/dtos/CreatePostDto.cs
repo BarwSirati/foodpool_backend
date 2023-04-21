@@ -1,14 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using FoodPool.post.enums;
 
 namespace FoodPool.post.dtos;
 
 public class CreatePostDto
 {
     [Required]
-    public int? UserId { get; set; }
+    public int UserId { get; set; }
     
     [Required]
-    public int? StallId { get; set; }
+    public int StallId { get; set; }
     
     [Required]
     public string? MenuName { get; set; }
@@ -16,8 +17,8 @@ public class CreatePostDto
     public string? Description { get; set; }
     
     [Required]
-    public int TypePost { get; set; }
+    public TypePost TypePost { get; set; }
     
     [Required]
-    public int? LimitOrder { get; set; }
+    public int LimitOrder { get; set; }
 }

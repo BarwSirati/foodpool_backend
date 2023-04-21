@@ -1,4 +1,5 @@
-﻿using FoodPool.user.dtos;
+﻿using FoodPool.post.enums;
+using FoodPool.user.dtos;
 using FoodPool.stall.dtos;
 
 namespace FoodPool.post.dtos;
@@ -16,10 +17,10 @@ public class GetPostDto
 
     public string? Description { get; set; }
 
-    public int PostStatus { get; set; }
+    public PostStatus PostStatus { get; set; }
 
-    public int TypePost { get; set; }
+    public TypePost TypePost { get; set; }
 
-    public int? LimitOrder { get; set; }
+    public int LimitOrder { get; set; }
 
 }
