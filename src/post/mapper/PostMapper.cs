@@ -10,7 +10,7 @@ public class PostMapper : Profile
     {
         CreateMap<Post,GetPostDto>();
         CreateMap<CreatePostDto,Post>();
-        
+
     }
     
 }
