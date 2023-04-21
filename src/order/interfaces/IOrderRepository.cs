@@ -1,12 +1,15 @@
 using FoodPool.order.entities;
+using FoodPool.order.dtos;
 
 namespace FoodPool.order.interfaces;
 
 public interface IOrderRepository
 {
-    Task<Order> GetOrderById(int id);
-
-    Task<List<Order>> GetOrderByPostId(int postId);
+    Task<Order> GetById(int id);
+    Task<List<Order>> GetByPostId(int postId);
+    Task<List<Order>> GetByUserId(int userId);
+    bool ExistById(int id);
+    void Update(UpdateOrderDto updateOrderDto, int id);
     void Insert(Order order);
     void Save();
 }
