@@ -1,4 +1,5 @@
 ﻿using FoodPool.data;
+using FoodPool.post.dtos;
 using FoodPool.post.entities;
 using FoodPool.post.interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,8 @@ public class PostRepository :IPostRepository
         return posts;
     }
 
+
+
     public async Task<List<Post>> GetByUserId(int userId){
         var posts = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall).ToListAsync();
         return posts;
@@ -29,6 +32,19 @@ public class PostRepository :IPostRepository
         var post = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall).FirstOrDefaultAsync(o => o.Id == id);
         return post!;
     }
+
+    public bool ExistById(int id)
+    {
+        return _dbContext.Post.Any(u => u.Id == id);
+    }
+
+    public void Update(UpdatePostDto updatePostDto, int id)
+    {
+        var post = GetById(id).Result;
+        post.PostStatus = updatePostDto.PostStatus;
+    }
+    
+
 
     public void Insert(Post post)
     {
