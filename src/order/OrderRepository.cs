@@ -23,7 +23,8 @@ public class OrderRepository : IOrderRepository
 
     public async Task<List<Order>> GetByPostId(int postId)
     {
-        var orders = await _dbContext.Order.Include(o => o.User).Where(o => o.PostId == postId).ToListAsync();
+        var orders = await _dbContext.Order.Include(o => o.User).Include(order => order.Post)
+            .Where(o => o.Post != null && o.Post.Id == postId).ToListAsync();
         return orders;
     }
 
