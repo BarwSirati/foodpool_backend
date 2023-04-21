@@ -11,4 +11,5 @@ public interface IPostService
     Task<Result<List<GetPostDto>>> GetByUserId(int userId);
     Task<Result<GetPostDto>> GetById(int id);
 
+
 }

@@ -30,6 +30,10 @@ public class PostRepository :IPostRepository
         return post!;
     }
 
+    public bool ExistById(int id){
+        return _dbContext.Post.All(post => post.Id == id);
+    }
+
     public void Insert(Post post)
     {
         _dbContext.Post.Add(post);
