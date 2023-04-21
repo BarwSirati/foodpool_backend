@@ -25,6 +25,7 @@ public class OrderController : ControllerBase
     {
         var order = await _orderService.GetById(id);
         if (order.Value is null) return NotFound();
+        if (_contextProvider.GetCurrentUser() != order.Value?.User?.Id) return Forbid();
         return Ok(order.Value);
     }
 
@@ -32,6 +33,7 @@ public class OrderController : ControllerBase
     [Authorize]
     public async Task<ActionResult<List<GetOrderDto>>> GetByUserId(int id)
     {
+        if (_contextProvider.GetCurrentUser() != id) return Forbid();
         var orders = await _orderService.GetByUserId(id);
         if (orders.Value is null) return NotFound();
         return Ok(orders.Value);
@@ -50,7 +52,7 @@ public class OrderController : ControllerBase
     [Authorize]
     public async Task<ActionResult> Create(CreateOrderDto createOrderDto)
     {
-        if (_contextProvider.GetCurrentUser() != createOrderDto.UserId) return Unauthorized();
+        if (_contextProvider.GetCurrentUser() != createOrderDto.UserId) return Forbid();
         var order = await _orderService.Create(createOrderDto);
         if (order.IsFailed)
         {
@@ -72,7 +74,21 @@ public class OrderController : ControllerBase
     [Authorize]
     public async Task<ActionResult<UpdateOrderDto>> UpdateById(UpdateOrderDto updateOrderDto, int id)
     {
-        var order = await _orderService.UpdateById(updateOrderDto, id, _contextProvider.GetCurrentUser());
+        var order = await _orderService.UpdateById(updateOrderDto, id);
+        if (order.IsFailed)
+        {
+            switch (order.Reasons[0].Message)
+            {
+                case "404":
+                    return NotFound();
+                case "400":
+                    return BadRequest();
+                case "403":
+                    return Forbid();
+                default:
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
         return Ok(order.Value);
     }
 }
