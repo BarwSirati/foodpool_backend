@@ -58,12 +58,9 @@ public class PostService : IPostService
                 updatePostDto.PostStatus = PostStatus.Inactive;
                 _postRepository.Update(updatePostDto, id);
                 _postRepository.Save();
-                return Result.Ok();
             }
-            else
-            {
-                return Result.Fail(new Error("404"));
-            }
+            var post = await GetById(id);
+            return Result.Ok(post.Value);
         }
         catch (Exception)
         {
