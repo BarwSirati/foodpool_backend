@@ -14,5 +14,6 @@ public class Post
     public string? Description { get; set; }
     [DefaultValue(0)]public PostStatus PostStatus { get; set; }
     public TypePost TypePost { get; set; }
+    public string? Location { get; set; }
     public int LimitOrder { get; set; }
 }

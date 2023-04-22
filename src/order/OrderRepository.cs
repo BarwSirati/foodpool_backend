@@ -3,6 +3,7 @@ using FoodPool.order.entities;
 using FoodPool.order.interfaces;
 using Microsoft.EntityFrameworkCore;
 using FoodPool.order.dtos;
+using FoodPool.order.enums;
 
 namespace FoodPool.order;
 
@@ -17,20 +18,26 @@ public class OrderRepository : IOrderRepository
 
     public async Task<Order> GetById(int id)
     {
-        var order = await _dbContext.Order.Include(o => o.User).FirstOrDefaultAsync(o => o.Id == id);
+        var order = await _dbContext.Order.Include(order => order.User).Include(order => order.Post).FirstOrDefaultAsync(o => o.Id == id);
         return order!;
     }
 
     public async Task<List<Order>> GetByPostId(int postId)
     {
-        var orders = await _dbContext.Order.Include(o => o.User).Include(order => order.Post)
-            .Where(o => o.Post != null && o.Post.Id == postId).ToListAsync();
+        var orders = await _dbContext.Order.Include(order => order.User).Include(order => order.Post)
+            .Where(order => order.Post != null && order.Post.Id == postId).ToListAsync();
+        return orders;
+    }
+
+    public async Task<List<Order>> GetDeliveredOrderByUserId(int userId)
+    {
+        var orders = await _dbContext.Order.Include(order => order.User).Include(order => order.Post).Where(order => order.User!.Id == userId && order.Status == OrderStatus.OrderDelivered).ToListAsync();
         return orders;
     }
 
     public async Task<List<Order>> GetByUserId(int userId)
     {
-        var orders = await _dbContext.Order.Include(o => o.User).Where(o => o.User!.Id == userId).ToListAsync();
+        var orders = await _dbContext.Order.Include(order => order.User).Include(order => order.Post).Where(o => o.User!.Id == userId).ToListAsync();
         return orders;
     }
 
