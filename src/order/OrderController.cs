@@ -45,6 +45,18 @@ public class OrderController : ControllerBase
     {
         var orders = await _orderService.GetByPostId(id, _contextProvider.GetCurrentUser());
         if (orders.Value is null) return NotFound();
+        if (orders.IsFailed)
+        {
+            switch (orders.Reasons[0].Message)
+            {
+                case "403":
+                    return Forbid();
+                case "400":
+                    return BadRequest();
+                default:
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
         return Ok(orders.Value);
     }
     
