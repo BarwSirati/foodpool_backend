@@ -69,6 +69,13 @@ public class OrderService : IOrderService
         return Result.Ok(orders.Select(order => _mapper.Map<GetOrderDto>(order)).ToList());
     }
 
+    public async Task<Result<List<GetAnonOrderDto>>> GetAnonOrderByPostId(int postId)
+    {
+        var findOrder = await GetById(postId);
+        var orders = await _orderRepository.GetByPostId(postId);
+        return Result.Ok(orders.Select(order => _mapper.Map<GetAnonOrderDto>(order)).ToList());
+    }
+
     public async Task<Result<List<GetOrderDto>>> GetDeliveredOrderByUserId(int userId)
     {
         var orders = await _orderRepository.GetDeliveredOrderByUserId(userId);
