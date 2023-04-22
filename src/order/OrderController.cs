@@ -47,6 +47,15 @@ public class OrderController : ControllerBase
         if (orders.Value is null) return NotFound();
         return Ok(orders.Value);
     }
+    
+    [HttpGet("post/{id:int}/anon")]
+    [Authorize]
+    public async Task<ActionResult<List<GetOrderDto>>> GetAnonOrderByPostId(int id)
+    {
+        var orders = await _orderService.GetAnonOrderByPostId(id);
+        if (orders.Value is null) return NotFound();
+        return Ok(orders.Value);
+    }
 
     [HttpGet("user/{id:int}/delivered")]
     [Authorize]

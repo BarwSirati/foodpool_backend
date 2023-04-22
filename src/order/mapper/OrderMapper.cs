@@ -10,5 +10,7 @@ public class OrderMapper : Profile
     {
         CreateMap<CreateOrderDto, Order>();
         CreateMap<Order, GetOrderDto>();
+        CreateMap<Order, GetAnonOrderDto>();
     }
 }
+
