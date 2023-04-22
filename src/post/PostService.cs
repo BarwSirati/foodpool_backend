@@ -53,17 +53,12 @@ public class PostService : IPostService
             if (!_postRepository.ExistById(id)) return Result.Fail(new Error("404"));
             var getPost = await _postRepository.GetById(id);
             updatePostDto.PostStatus = getPost.PostStatus;
-            if (updatePostDto.PostStatus == PostStatus.Active)
-            {
-                updatePostDto.PostStatus = PostStatus.Inactive;
-                _postRepository.Update(updatePostDto, id);
-                _postRepository.Save();
-                return Result.Ok();
-            }
-            else
-            {
-                return Result.Fail(new Error("404"));
-            }
+            if (updatePostDto.PostStatus != PostStatus.Active) return Result.Fail(new Error("404"));
+            updatePostDto.PostStatus = PostStatus.Inactive;
+            _postRepository.Update(updatePostDto, id);
+            _postRepository.Save();
+            var post = await GetById(id);
+            return Result.Ok(post.Value);
         }
         catch (Exception)
         {
