@@ -55,12 +55,16 @@ public class OrderService : IOrderService
 
     public async Task<Result<List<GetOrderDto>>> GetByUserId(int userId)
     {
+        if (!_userRepository.ExistById(userId)) return Result.Fail(new Error("404"));
         var orders = await _orderRepository.GetByUserId(userId);
         return Result.Ok(orders.Select(order => _mapper.Map<GetOrderDto>(order)).ToList());
     }
 
-    public async Task<Result<List<GetOrderDto>>> GetByPostId(int postId)
+    public async Task<Result<List<GetOrderDto>>> GetByPostId(int postId, int userId)
     {
+        if (!_postRepository.ExistById(postId)) return Result.Fail(new Error("404"));
+        var findOrder = await GetById(postId);
+        if (findOrder.Value.Post.User.Id != userId) return Result.Fail(new Error("403"));
         var orders = await _orderRepository.GetByPostId(postId);
         return Result.Ok(orders.Select(order => _mapper.Map<GetOrderDto>(order)).ToList());
     }
@@ -77,6 +81,7 @@ public class OrderService : IOrderService
         {
             if (!_orderRepository.ExistById(id)) return Result.Fail(new Error("404"));
             var findOrder = await GetById(id);
+            if (findOrder.Value.User!.Id != userId) return Result.Fail(new Error("403"));
             if (findOrder.Value.Status.CompareTo(updateOrderDto.Status) == 1) return Result.Fail(new Error("403"));
             _orderRepository.Update(updateOrderDto, id);
             _orderRepository.Save();
