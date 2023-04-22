@@ -93,4 +93,5 @@ public class PostService : IPostService
         return Result.Ok(posts.Select(post => _mapper.Map<GetPostDto>(post)).ToList());
     }
 
+
 }

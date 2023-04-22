@@ -33,6 +33,7 @@ public class PostRepository :IPostRepository
         return post!;
     }
 
+
     public bool ExistById(int id)
     {
         return _dbContext.Post.Any(u => u.Id == id);
