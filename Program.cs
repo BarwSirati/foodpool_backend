@@ -2,12 +2,15 @@ using System.Text;
 using FoodPool.auth;
 using FoodPool.auth.interfaces;
 using FoodPool.data;
+using FoodPool.order;
+using FoodPool.order.interfaces;
+using FoodPool.post;
+using FoodPool.post.interfaces;
 using FoodPool.provider;
 using FoodPool.provider.interfaces;
 using FoodPool.stall;
 using FoodPool.stall.interfaces;
 using FoodPool.user;
-using FoodPool.user.enums;
 using FoodPool.user.interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -25,11 +28,15 @@ builder.Services.AddSwaggerGen();
 //Map Repository with Interface
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IStallRepository, StallRepository>();
+builder.Services.AddTransient<IOrderRepository, OrderRepository>();
+builder.Services.AddTransient<IPostRepository, PostRepository>();
 
 //Map Service with Interface
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IStallService, StallService>(); 
+builder.Services.AddScoped<IStallService, StallService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IHttpContextProvider, HttpContextProvider>();
 
 //Add AutoMapper
@@ -76,8 +83,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-Console.WriteLine(Role.User.ToString());
 
 app.UseHttpsRedirection();
 app.UseCors(myAllowSpecificOrigins);
