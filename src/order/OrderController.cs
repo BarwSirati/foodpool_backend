@@ -25,7 +25,7 @@ public class OrderController : ControllerBase
     {
         var order = await _orderService.GetById(id);
         if (order.Value is null) return NotFound();
-        if (_contextProvider.GetCurrentUser() != order.Value?.User?.Id) return Forbid();
+        if (_contextProvider.GetCurrentUser() != order.Value.User.Id) return Forbid();
         return Ok(order.Value);
     }
 
@@ -43,11 +43,33 @@ public class OrderController : ControllerBase
     [Authorize]
     public async Task<ActionResult<List<GetOrderDto>>> GetByPostId(int id)
     {
-        var orders = await _orderService.GetByPostId(id);
+        var orders = await _orderService.GetByPostId(id, _contextProvider.GetCurrentUser());
         if (orders.Value is null) return NotFound();
+        if (orders.IsFailed)
+        {
+            switch (orders.Reasons[0].Message)
+            {
+                case "403":
+                    return Forbid();
+                case "400":
+                    return BadRequest();
+                default:
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
         return Ok(orders.Value);
     }
 
+    [HttpGet("user/{id:int}/delivered")]
+    [Authorize]
+    public async Task<ActionResult<List<GetOrderDto>>> GetDeliveredOrderByUserId(int id)
+    {
+        if (_contextProvider.GetCurrentUser() != id) return Forbid();
+        var orders = await _orderService.GetDeliveredOrderByUserId(id);
+        if (orders.Value is null) return NotFound();
+        return Ok(orders.Value);
+    }
+    
     [HttpPost]
     [Authorize]
     public async Task<ActionResult> Create(CreateOrderDto createOrderDto)
@@ -70,11 +92,34 @@ public class OrderController : ControllerBase
         return Ok();
     }
 
-    [HttpPut("{id:int}")]
+    [HttpPut("post/{id:int}")]
     [Authorize]
-    public async Task<ActionResult<UpdateOrderDto>> UpdateById(UpdateOrderDto updateOrderDto, int id)
+    public async Task<ActionResult<UpdateOrderDto>> UpdateByPostUser(UpdateOrderDto updateOrderDto, int id)
     {
-        var order = await _orderService.UpdateById(updateOrderDto, id);
+        var order = await _orderService.UpdateByPostUser(updateOrderDto, id, _contextProvider.GetCurrentUser());
+        if (order.IsFailed)
+        {
+            switch (order.Reasons[0].Message)
+            {
+                case "404":
+                    return NotFound();
+                case "400":
+                    return BadRequest();
+                case "403":
+                    return Forbid();
+                default:
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+        return Ok(order.Value);
+    }
+    
+    [HttpPut("order/{id:int}")]
+    [Authorize]
+    public async Task<ActionResult<UpdateOrderDto>> UpdateByOrderUser(UpdateOrderDto updateOrderDto, int id)
+    {
+        if (_contextProvider.GetCurrentUser() != id) return Forbid();
+        var order = await _orderService.UpdateByOrderUser(updateOrderDto, id, _contextProvider.GetCurrentUser());
         if (order.IsFailed)
         {
             switch (order.Reasons[0].Message)

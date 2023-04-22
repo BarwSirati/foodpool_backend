@@ -8,7 +8,6 @@ public class GetPostDto
 {
 
     public int Id { get; set; }
-
     public GetUserDto User { get; set; }
 
     public GetStallDto Stall { get; set; }

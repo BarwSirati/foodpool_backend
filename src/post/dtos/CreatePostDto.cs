@@ -5,23 +5,17 @@ namespace FoodPool.post.dtos;
 
 public class CreatePostDto
 {
-    [Required]
-    public int UserId { get; set; }
-    
-    [Required]
-    public int StallId { get; set; }
-    
-    [Required]
-    public string? MenuName { get; set; }
-    
+    [Required] public int UserId { get; set; }
+
+    [Required] public int StallId { get; set; }
+
+    [Required] public string? MenuName { get; set; }
+
     public string? Description { get; set; }
-    
-    [Required]
-    public string? Location { get; set; }
-    
-    [Required]
-    public TypePost TypePost { get; set; }
-    
-    [Required]
-    public int LimitOrder { get; set; }
+
+    [Required] public TypePost TypePost { get; set; }
+
+    [Required] public string? Location { get; set; }
+
+    [Required] public int LimitOrder { get; set; }
 }

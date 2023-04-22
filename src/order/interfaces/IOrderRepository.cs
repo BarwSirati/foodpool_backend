@@ -7,6 +7,7 @@ public interface IOrderRepository
 {
     Task<Order> GetById(int id);
     Task<List<Order>> GetByPostId(int postId);
+    Task<List<Order>> GetDeliveredOrderByUserId(int postId);
     Task<List<Order>> GetByUserId(int userId);
     bool ExistById(int id);
     void Update(UpdateOrderDto updateOrderDto, int id);
