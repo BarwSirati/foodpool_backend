@@ -59,7 +59,7 @@ public class OrderController : ControllerBase
         }
         return Ok(orders.Value);
     }
-    
+
     [HttpGet("post/{id:int}/anon")]
     [Authorize]
     public async Task<ActionResult<List<GetOrderDto>>> GetAnonOrderByPostId(int id)
@@ -78,7 +78,7 @@ public class OrderController : ControllerBase
         if (orders.Value is null) return NotFound();
         return Ok(orders.Value);
     }
-    
+
     [HttpPost]
     [Authorize]
     public async Task<ActionResult> Create(CreateOrderDto createOrderDto)
@@ -122,7 +122,7 @@ public class OrderController : ControllerBase
         }
         return Ok(order.Value);
     }
-    
+
     [HttpPut("order/{id:int}")]
     [Authorize]
     public async Task<ActionResult<UpdateOrderDto>> UpdateByOrderUser(UpdateOrderDto updateOrderDto, int id)

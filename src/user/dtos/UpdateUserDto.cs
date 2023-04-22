@@ -6,14 +6,14 @@ public class UpdateUserDto
 {
     [Required]
     public string? Name { get; set; }
-    
+
     [Required]
     public string? Lastname { get; set; }
-    
+
     [Required]
     public string? Username { get; set; }
-    
-    
+
+
     public string? Password { get; set; }
 
     [Required]

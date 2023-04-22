@@ -10,7 +10,7 @@ public interface IPostRepository
     Task<List<Post>> GetByUserId(int userId);
     Task<Post> GetById(int id);
     bool ExistById(int id);
-    void Update(UpdatePostDto updatePostDto,int id);
+    void Update(UpdatePostDto updatePostDto, int id);
     void Insert(Post post);
     void Save();
 }

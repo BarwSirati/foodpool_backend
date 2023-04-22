@@ -67,7 +67,7 @@ public class UserService : IUserService
                 var getUser = await _userRepository.GetById(id);
                 updateUserDto.Password = getUser.Password;
             }
-            
+
             _userRepository.Update(updateUserDto, id);
             _userRepository.Save();
             var user = await GetById(id);

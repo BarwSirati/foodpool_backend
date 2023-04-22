@@ -5,9 +5,9 @@ namespace FoodPool.post.dtos;
 
 public class UpdatePostDto
 {
-    
+
     [Required]
     public PostStatus PostStatus { get; set; }
-    
-    
+
+
 }

@@ -72,10 +72,7 @@ public class PostService : IPostService
     {
         var posts = await _postRepository.GetAll();
         return Result.Ok(posts.Select(post => _mapper.Map<GetPostDto>(post)).ToList());
-        
     }
-
- 
 
     public async Task<Result<GetPostDto>> GetById(int id)
     {
@@ -83,10 +80,9 @@ public class PostService : IPostService
         return Result.Ok(_mapper.Map<GetPostDto>(post));
     }
 
-    public async Task<Result<List<GetPostDto>>> GetByUserId(int userId){
+    public async Task<Result<List<GetPostDto>>> GetByUserId(int userId)
+    {
         var posts = await _postRepository.GetByUserId(userId);
         return Result.Ok(posts.Select(post => _mapper.Map<GetPostDto>(post)).ToList());
     }
-
-
 }

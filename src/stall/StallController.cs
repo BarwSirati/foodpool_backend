@@ -12,7 +12,7 @@ public class StallController : ControllerBase
 {
     private readonly IStallService _stallService;
     private readonly IHttpContextProvider _contextProvider;
-    
+
     public StallController(IStallService stallService, IHttpContextProvider contextProvider)
     {
         _stallService = stallService;

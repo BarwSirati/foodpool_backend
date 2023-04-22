@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FoodPool.post;
 
-public class PostRepository :IPostRepository
+public class PostRepository : IPostRepository
 {
     private readonly FoodpoolDbContext _dbContext;
 
@@ -23,7 +23,8 @@ public class PostRepository :IPostRepository
 
 
 
-    public async Task<List<Post>> GetByUserId(int userId){
+    public async Task<List<Post>> GetByUserId(int userId)
+    {
         var posts = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall).ToListAsync();
         return posts;
     }
@@ -44,8 +45,6 @@ public class PostRepository :IPostRepository
         var post = GetById(id).Result;
         post.PostStatus = updatePostDto.PostStatus;
     }
-    
-
 
     public void Insert(Post post)
     {
