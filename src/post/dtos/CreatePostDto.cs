@@ -17,6 +17,9 @@ public class CreatePostDto
     public string? Description { get; set; }
     
     [Required]
+    public string? Location { get; set; }
+    
+    [Required]
     public TypePost TypePost { get; set; }
     
     [Required]

@@ -17,6 +17,8 @@ public class GetPostDto
 
     public string? Description { get; set; }
 
+    public string? Location { get; set; }
+    
     public PostStatus PostStatus { get; set; }
 
     public TypePost TypePost { get; set; }
