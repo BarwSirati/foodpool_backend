@@ -72,13 +72,10 @@ const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(myAllowSpecificOrigins,
-        policy =>
-        {
-            policy.WithOrigins(string.Join(",", builder.Configuration["whitelist"].Split(","))).AllowAnyHeader()
-                .AllowAnyMethod();
-        });
+        policy => { policy.WithOrigins("http://loca").AllowAnyHeader().AllowAnyMethod(); });
 });
 
+Console.WriteLine();
 
 var app = builder.Build();
 
