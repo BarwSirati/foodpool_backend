@@ -72,8 +72,13 @@ const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(myAllowSpecificOrigins,
-        policy => { policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod(); });
+        policy =>
+        {
+            policy.WithOrigins(string.Join(",", builder.Configuration["whitelist"].Split(","))).AllowAnyHeader()
+                .AllowAnyMethod();
+        });
 });
+
 
 var app = builder.Build();
 
