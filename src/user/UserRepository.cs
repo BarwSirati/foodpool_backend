@@ -49,6 +49,18 @@ public class UserRepository : IUserRepository
         user.Tel = updateUserDto.Tel;
     }
 
+    public void AddPoint(int userId)
+    {
+        var user = GetById(userId).Result;
+        user.Point += 1;
+    }
+
+    public void RemovePoint(int userId)
+    {
+        var user = GetById(userId).Result;
+        user.Point -= 1;
+    }
+
     public void Delete(int id)
     {
         var user = GetById(id).Result;

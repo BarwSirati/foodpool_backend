@@ -18,7 +18,8 @@ public class OrderRepository : IOrderRepository
 
     public async Task<Order> GetById(int id)
     {
-        var order = await _dbContext.Order.Include(order => order.User).Include(order => order.Post).FirstOrDefaultAsync(o => o.Id == id);
+        var order = await _dbContext.Order.Include(order => order.User).Include(order => order.Post)
+            .FirstOrDefaultAsync(o => o.Id == id);
         return order!;
     }
 
@@ -31,13 +32,15 @@ public class OrderRepository : IOrderRepository
 
     public async Task<List<Order>> GetDeliveredOrderByUserId(int userId)
     {
-        var orders = await _dbContext.Order.Include(order => order.User).Include(order => order.Post).Where(order => order.User!.Id == userId && order.Status == OrderStatus.OrderDelivered).ToListAsync();
+        var orders = await _dbContext.Order.Include(order => order.User).Include(order => order.Post)
+            .Where(order => order.User!.Id == userId && order.Status == OrderStatus.OrderDelivered).ToListAsync();
         return orders;
     }
 
     public async Task<List<Order>> GetByUserId(int userId)
     {
-        var orders = await _dbContext.Order.Include(order => order.User).Include(order => order.Post).Where(o => o.User!.Id == userId).ToListAsync();
+        var orders = await _dbContext.Order.Include(order => order.User).Include(order => order.Post)
+            .Where(o => o.User!.Id == userId).ToListAsync();
         return orders;
     }
 

@@ -6,5 +6,5 @@ public enum OrderStatus
     HeadingToCafeteria,
     HeadingToTheDestination,
     OrderDelivered,
-    OrderCancelled,
+    OrderCancelled
 }

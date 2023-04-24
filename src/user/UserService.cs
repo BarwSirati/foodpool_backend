@@ -86,4 +86,22 @@ public class UserService : IUserService
         _userRepository.Save();
         return Task.FromResult(Result.Ok());
     }
+
+    public Task<Result> AddPoint(int userId)
+    {
+        if (!_userRepository.ExistById(userId)) return Task.FromResult(Result.Fail(new Error("404")));
+        _userRepository.AddPoint(userId);
+        _userRepository.Save();
+        return Task.FromResult(Result.Ok());
+    }
+
+    public async Task<Result> RemovePoint(int userId)
+    {
+        if (!_userRepository.ExistById(userId)) return Result.Fail(new Error("404"));
+        var user = await _userRepository.GetById(userId);
+        if (user.Point == 0) return Result.Fail(new Error("400"));
+        _userRepository.RemovePoint(userId);
+        _userRepository.Save();
+        return Result.Ok();
+    }
 }

@@ -84,13 +84,15 @@ public class OrderController : ControllerBase
     public async Task<ActionResult> Create(CreateOrderDto createOrderDto)
     {
         if (_contextProvider.GetCurrentUser() != createOrderDto.UserId) return Forbid();
-        var order = await _orderService.Create(createOrderDto);
+        var order = await _orderService.Create(createOrderDto,_contextProvider.GetCurrentUser());
         if (order.IsFailed)
         {
             switch (order.Reasons[0].Message)
             {
                 case "404":
                     return NotFound();
+                case "403":
+                    return Forbid();
                 case "400":
                     return BadRequest();
                 default:

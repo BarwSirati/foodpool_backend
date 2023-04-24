@@ -13,7 +13,7 @@ public class User
     public string? Username { get; set; }
     public string? Password { get; set; }
 
-    public int Point { get; set; } = 0;
+    public int Point { get; set; } = 3;
 
     [StringLength(10)]
     [MaxLength(10)]
