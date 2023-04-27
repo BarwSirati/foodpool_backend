@@ -46,7 +46,7 @@ public class PostController : ControllerBase
     [Authorize]
     public async Task<ActionResult<List<GetPostDto>>> GetAllPost()
     {
-        var posts = await _postService.GetAll();
+        var posts = await _postService.GetAll(_contextProvider.GetCurrentUser());
         if (posts.Value is null) return NotFound();
 
         return Ok(posts.Value);

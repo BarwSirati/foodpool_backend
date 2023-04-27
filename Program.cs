@@ -72,7 +72,11 @@ const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(myAllowSpecificOrigins,
-        policy => { policy.WithOrigins("http://loca").AllowAnyHeader().AllowAnyMethod(); });
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173", "https://foodpool.bxdman.com").AllowAnyHeader()
+                .AllowAnyMethod();
+        });
 });
 
 Console.WriteLine();

@@ -17,7 +17,8 @@ public class PostService : IPostService
     private readonly IUserRepository _userRepository;
     private readonly IStallRepository _stallRepository;
 
-    public PostService(IPostRepository postRepository, IUserRepository userRepository, IMapper mapper, IStallRepository stallRepository)
+    public PostService(IPostRepository postRepository, IUserRepository userRepository, IMapper mapper,
+        IStallRepository stallRepository)
     {
         _postRepository = postRepository;
         _userRepository = userRepository;
@@ -64,13 +65,12 @@ public class PostService : IPostService
         {
             return Result.Fail(new Error("400"));
         }
-
     }
 
 
-    public async Task<Result<List<GetPostDto>>> GetAll()
+    public async Task<Result<List<GetPostDto>>> GetAll(int userId)
     {
-        var posts = await _postRepository.GetAll();
+        var posts = await _postRepository.GetAll(userId);
         return Result.Ok(posts.Select(post => _mapper.Map<GetPostDto>(post)).ToList());
     }
 

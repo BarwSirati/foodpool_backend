@@ -15,12 +15,13 @@ public class PostRepository : IPostRepository
         _dbContext = dbContext;
     }
 
-    public async Task<List<Post>> GetAll()
+    public async Task<List<Post>> GetAll(int userId)
     {
-        var posts = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall).ToListAsync();
+        var posts = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall).Where(o => o.User.Id != userId)
+            .OrderByDescending(o => o.Id)
+            .ToListAsync();
         return posts;
     }
-
 
 
     public async Task<List<Post>> GetByUserId(int userId)
@@ -28,9 +29,11 @@ public class PostRepository : IPostRepository
         var posts = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall).ToListAsync();
         return posts;
     }
+
     public async Task<Post> GetById(int id)
     {
-        var post = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall).FirstOrDefaultAsync(o => o.Id == id);
+        var post = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall)
+            .FirstOrDefaultAsync(o => o.Id == id);
         return post!;
     }
 
