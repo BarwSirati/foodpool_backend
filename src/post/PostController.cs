@@ -65,10 +65,10 @@ public class PostController : ControllerBase
 
     [HttpGet("user/{id:int}")]
     [Authorize]
-    public async Task<ActionResult<List<GetPostDto>>> GetPostByUserId(int userId)
+    public async Task<ActionResult<List<GetPostDto>>> GetPostByUserId(int id)
     {
-        if (_contextProvider.GetCurrentUser() != userId) return Forbid();
-        var posts = await _postService.GetByUserId(userId);
+        if (_contextProvider.GetCurrentUser() != id) return Forbid();
+        var posts = await _postService.GetByUserId(id);
         if (posts.Value is null) return NotFound();
         return Ok(posts.Value);
     }
