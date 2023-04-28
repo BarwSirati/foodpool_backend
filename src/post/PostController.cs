@@ -77,8 +77,7 @@ public class PostController : ControllerBase
     [Authorize]
     public async Task<ActionResult<UpdatePostDto>> Update(UpdatePostDto updatePostDto, int id)
     {
-        if (_contextProvider.GetCurrentUser() != id) return Forbid();
-        var post = await _postService.Update(updatePostDto, id);
+        var post = await _postService.Update(updatePostDto, id,_contextProvider.GetCurrentUser());
         if (post.IsFailed)
         {
             switch (post.Reasons[0].Message)
@@ -87,6 +86,8 @@ public class PostController : ControllerBase
                     return NotFound();
                 case "400":
                     return BadRequest();
+                case "403":
+                    return Forbid();
                 default:
                     return StatusCode(StatusCodes.Status500InternalServerError);
             }

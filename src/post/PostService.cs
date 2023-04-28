@@ -51,12 +51,13 @@ public class PostService : IPostService
         }
     }
 
-    public async Task<Result<GetPostDto>> Update(UpdatePostDto updatePostDto, int id)
+    public async Task<Result<GetPostDto>> Update(UpdatePostDto updatePostDto, int id, int userId)
     {
         try
         {
             if (!_postRepository.ExistById(id)) return Result.Fail(new Error("404"));
             var getPost = await _postRepository.GetById(id);
+            if (getPost.User.Id != userId) return Result.Fail(new Error("403"));
             updatePostDto.PostStatus = getPost.PostStatus;
             if (updatePostDto.PostStatus != PostStatus.Active) return Result.Fail(new Error("404"));
             updatePostDto.PostStatus = PostStatus.Inactive;
@@ -81,6 +82,7 @@ public class PostService : IPostService
             var count = await _orderRepository.GetCountOrderByPostId(p.Id);
             p.CountOrder = count;
         }
+
         return Result.Ok(postList);
     }
 
