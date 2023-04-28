@@ -62,7 +62,7 @@ public class OrderController : ControllerBase
 
     [HttpGet("post/{id:int}/anon")]
     [Authorize]
-    public async Task<ActionResult<List<GetOrderDto>>> GetAnonOrderByPostId(int id)
+    public async Task<ActionResult<List<GetAnonOrderDto>>> GetAnonOrderByPostId(int id)
     {
         var orders = await _orderService.GetAnonOrderByPostId(id);
         if (orders.Value is null) return NotFound();
@@ -84,7 +84,7 @@ public class OrderController : ControllerBase
     public async Task<ActionResult> Create(CreateOrderDto createOrderDto)
     {
         if (_contextProvider.GetCurrentUser() != createOrderDto.UserId) return Forbid();
-        var order = await _orderService.Create(createOrderDto,_contextProvider.GetCurrentUser());
+        var order = await _orderService.Create(createOrderDto, _contextProvider.GetCurrentUser());
         if (order.IsFailed)
         {
             switch (order.Reasons[0].Message)
