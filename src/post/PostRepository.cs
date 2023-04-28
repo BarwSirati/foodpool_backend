@@ -1,6 +1,7 @@
 ﻿using FoodPool.data;
 using FoodPool.post.dtos;
 using FoodPool.post.entities;
+using FoodPool.post.enums;
 using FoodPool.post.interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +18,8 @@ public class PostRepository : IPostRepository
 
     public async Task<List<Post>> GetAll(int userId)
     {
-        var posts = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall).Where(o => o.User.Id != userId)
+        var posts = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall)
+            .Where(o => o.User.Id != userId && o.PostStatus == PostStatus.Active)
             .OrderByDescending(o => o.Id)
             .ToListAsync();
         return posts;
