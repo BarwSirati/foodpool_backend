@@ -125,7 +125,7 @@ public class OrderController : ControllerBase
         return Ok(order.Value);
     }
 
-    [HttpPut("order/{id:int}")]
+    [HttpPut("user/{id:int}")]
     [Authorize]
     public async Task<ActionResult<UpdateOrderDto>> UpdateByOrderUser(UpdateOrderDto updateOrderDto, int id)
     {

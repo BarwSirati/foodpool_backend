@@ -48,7 +48,7 @@ public class OrderRepository : IOrderRepository
     public async Task<List<Order>> GetByUserId(int userId)
     {
         var orders = await _dbContext.Order.Include(order => order.User).Include(order => order.Post)
-            .Where(o => o.User!.Id == userId).ToListAsync();
+            .Where(o => o.User!.Id == userId).OrderByDescending(o => o.Id).ToListAsync();
         return orders;
     }
 

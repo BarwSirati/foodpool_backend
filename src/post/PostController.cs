@@ -73,7 +73,7 @@ public class PostController : ControllerBase
         return Ok(posts.Value);
     }
 
-    [HttpPut("update/{id:int}")]
+    [HttpPut("{id:int}")]
     [Authorize]
     public async Task<ActionResult<UpdatePostDto>> Update(UpdatePostDto updatePostDto, int id)
     {
