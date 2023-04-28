@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using FluentResults;
+using FoodPool.order.entities;
+using FoodPool.order.interfaces;
 using FoodPool.post.dtos;
 using FoodPool.post.entities;
 using FoodPool.post.enums;
@@ -16,14 +18,16 @@ public class PostService : IPostService
     private readonly IMapper _mapper;
     private readonly IUserRepository _userRepository;
     private readonly IStallRepository _stallRepository;
+    private readonly IOrderRepository _orderRepository;
 
     public PostService(IPostRepository postRepository, IUserRepository userRepository, IMapper mapper,
-        IStallRepository stallRepository)
+        IStallRepository stallRepository, IOrderRepository orderRepository)
     {
         _postRepository = postRepository;
         _userRepository = userRepository;
         _mapper = mapper;
         _stallRepository = stallRepository;
+        _orderRepository = orderRepository;
     }
 
     public async Task<Result> Create(CreatePostDto createPostDto)
@@ -71,7 +75,13 @@ public class PostService : IPostService
     public async Task<Result<List<GetPostDto>>> GetAll(int userId)
     {
         var posts = await _postRepository.GetAll(userId);
-        return Result.Ok(posts.Select(post => _mapper.Map<GetPostDto>(post)).ToList());
+        var postList = posts.Select(post => _mapper.Map<GetPostDto>(post)).ToList();
+        foreach (var p in postList)
+        {
+            var count = await _orderRepository.GetCountOrderByPostId(p.Id);
+            p.CountOrder = count;
+        }
+        return Result.Ok(postList);
     }
 
     public async Task<Result<GetPostDto>> GetById(int id)

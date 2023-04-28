@@ -23,10 +23,18 @@ public class OrderRepository : IOrderRepository
         return order!;
     }
 
+    public async Task<int> GetCountOrderByPostId(int postId)
+    {
+        var count = await _dbContext.Order.Where(order => order.Post.Id == postId).CountAsync();
+        return count;
+    }
+
+
     public async Task<List<Order>> GetByPostId(int postId)
     {
         var orders = await _dbContext.Order.Include(order => order.User).Include(order => order.Post)
-            .Where(order => order.Post != null && order.Post.Id == postId).ToListAsync();
+            .Where(order => order.Post != null && order.Post.Id == postId).OrderByDescending(order => order.Id)
+            .ToListAsync();
         return orders;
     }
 
