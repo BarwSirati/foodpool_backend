@@ -67,9 +67,13 @@ public class OrderService : IOrderService
     public async Task<Result<List<GetOrderDto>>> GetByPostId(int postId, int userId)
     {
         if (!_postRepository.ExistById(postId)) return Result.Fail(new Error("404"));
-        var findOrder = await GetById(postId);
-        if (findOrder.Value.Post.User.Id != userId) return Result.Fail(new Error("403"));
         var orders = await _orderRepository.GetByPostId(postId);
+        foreach (var order in orders)
+        {
+            if (order.Post.User.Id != userId)
+                return Result.Fail(new Error("403"));
+        }
+
         return Result.Ok(orders.Select(order => _mapper.Map<GetOrderDto>(order)).ToList());
     }
 

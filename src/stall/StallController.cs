@@ -39,18 +39,12 @@ public class StallController : ControllerBase
     public async Task<ActionResult> Create(CreateStallDto createStallDto)
     {
         var stall = await _stallService.Create(createStallDto);
-        if (stall.IsFailed)
+        if (!stall.IsFailed) return Ok();
+        return stall.Reasons[0].Message switch
         {
-            switch (stall.Reasons[0].Message)
-            {
-                case "400":
-                    return BadRequest();
-                default:
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-
-        return Ok();
+            "400" => BadRequest(),
+            _ => StatusCode(StatusCodes.Status500InternalServerError)
+        };
     }
 
     [HttpPut("{id:int}")]

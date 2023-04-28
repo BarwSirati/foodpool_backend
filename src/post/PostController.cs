@@ -27,19 +27,13 @@ public class PostController : ControllerBase
         if (_contextProvider.GetCurrentUser() != createPostDto.UserId) return Forbid();
 
         var post = await _postService.Create(createPostDto);
-        if (post.IsFailed)
+        if (!post.IsFailed) return Ok();
+        return post.Reasons[0].Message switch
         {
-            switch (post.Reasons[0].Message)
-            {
-                case "404":
-                    return NotFound();
-                case "400":
-                    return BadRequest();
-                default:
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-        return Ok();
+            "404" => NotFound(),
+            "400" => BadRequest(),
+            _ => StatusCode(StatusCodes.Status500InternalServerError)
+        };
     }
 
     [HttpGet]
@@ -78,21 +72,13 @@ public class PostController : ControllerBase
     public async Task<ActionResult<UpdatePostDto>> Update(UpdatePostDto updatePostDto, int id)
     {
         var post = await _postService.Update(updatePostDto, id,_contextProvider.GetCurrentUser());
-        if (post.IsFailed)
+        if (!post.IsFailed) return Ok(post.Value);
+        return post.Reasons[0].Message switch
         {
-            switch (post.Reasons[0].Message)
-            {
-                case "404":
-                    return NotFound();
-                case "400":
-                    return BadRequest();
-                case "403":
-                    return Forbid();
-                default:
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-
-        return Ok(post.Value);
+            "404" => NotFound(),
+            "400" => BadRequest(),
+            "403" => Forbid(),
+            _ => StatusCode(StatusCodes.Status500InternalServerError)
+        };
     }
 }

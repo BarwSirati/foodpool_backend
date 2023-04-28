@@ -19,8 +19,9 @@ public class OrderRepository : IOrderRepository
     public async Task<Order> GetById(int id)
     {
         var order = await _dbContext.Order.Include(order => order.User).Include(order => order.Post)
+            .Include(order => order.Post.User).Include(order => order.Post.Stall)
             .FirstOrDefaultAsync(o => o.Id == id);
-        return order!;
+        return order;
     }
 
     public async Task<int> GetCountOrderByPostId(int postId)
@@ -33,7 +34,8 @@ public class OrderRepository : IOrderRepository
     public async Task<List<Order>> GetByPostId(int postId)
     {
         var orders = await _dbContext.Order.Include(order => order.User).Include(order => order.Post)
-            .Where(order => order.Post != null && order.Post.Id == postId).OrderByDescending(order => order.Id)
+            .Include(order => order.Post.User).Include(order => order.Post.Stall)
+            .Where(order => order.Post.Id == postId).OrderByDescending(order => order.Id)
             .ToListAsync();
         return orders;
     }
