@@ -26,7 +26,8 @@ public class PostRepository : IPostRepository
 
     public async Task<List<Post>> GetByUserId(int userId)
     {
-        var posts = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall).ToListAsync();
+        var posts = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall)
+            .Where(post => post.User.Id == userId).ToListAsync();
         return posts;
     }
 
