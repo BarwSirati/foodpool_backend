@@ -43,6 +43,7 @@ public class OrderRepository : IOrderRepository
     public async Task<List<Order>> GetDeliveredOrderByUserId(int userId)
     {
         var orders = await _dbContext.Order.Include(order => order.User).Include(order => order.Post)
+            .Include(order => order.Post.User).Include(order => order.Post.Stall)
             .Where(order => order.User!.Id == userId && order.Status == OrderStatus.OrderDelivered).ToListAsync();
         return orders;
     }
@@ -50,6 +51,7 @@ public class OrderRepository : IOrderRepository
     public async Task<List<Order>> GetByUserId(int userId)
     {
         var orders = await _dbContext.Order.Include(order => order.User).Include(order => order.Post)
+            .Include(order => order.Post.User).Include(order => order.Post.Stall)
             .Where(o => o.User!.Id == userId).OrderByDescending(o => o.Id).ToListAsync();
         return orders;
     }
