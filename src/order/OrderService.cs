@@ -33,6 +33,8 @@ public class OrderService : IOrderService
         {
             if (!_userRepository.ExistById(createOrderDto.UserId)) return Result.Fail(new Error("404"));
             if (!_postRepository.ExistById(createOrderDto.PostId)) return Result.Fail(new Error("404"));
+            if (_orderRepository.ExistOrder(createOrderDto.PostId, createOrderDto.UserId))
+                return Result.Fail(new Error("403"));
             var user = await _userRepository.GetById(createOrderDto.UserId);
             var post = await _postRepository.GetById(createOrderDto.PostId);
             var countOrder = await _orderRepository.GetCountOrderByPostId(createOrderDto.PostId);

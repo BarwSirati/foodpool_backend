@@ -77,13 +77,15 @@ public class PostService : IPostService
     {
         var posts = await _postRepository.GetAll(userId);
         var postList = posts.Select(post => _mapper.Map<GetPostDto>(post)).ToList();
-        foreach (var p in postList)
+        var returnPost = new List<GetPostDto>();
+        foreach (var p in postList.Where(p => !_orderRepository.ExistOrder(p.Id, userId)))
         {
             var count = await _orderRepository.GetCountOrderByPostId(p.Id);
             p.CountOrder = count;
+            returnPost.Add(p);
         }
 
-        return Result.Ok(postList);
+        return Result.Ok(returnPost);
     }
 
     public async Task<Result<GetPostDto>> GetById(int id)

@@ -24,6 +24,11 @@ public class OrderRepository : IOrderRepository
         return order;
     }
 
+    public bool ExistOrder(int postId, int userId)
+    {
+        return _dbContext.Order.Any(order => order.Post.Id == postId && order.User.Id == userId);
+    }
+
     public async Task<int> GetCountOrderByPostId(int postId)
     {
         var count = await _dbContext.Order.Where(order => order.Post.Id == postId).CountAsync();
