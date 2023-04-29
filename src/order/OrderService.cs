@@ -31,18 +31,22 @@ public class OrderService : IOrderService
     {
         try
         {
-            if (!_userRepository.ExistById(createOrderDto.UserId))
-                return Result.Fail(new Error("404"));
+            if (!_userRepository.ExistById(createOrderDto.UserId)) return Result.Fail(new Error("404"));
+            if (!_postRepository.ExistById(createOrderDto.PostId)) return Result.Fail(new Error("404"));
             var user = await _userRepository.GetById(createOrderDto.UserId);
             var post = await _postRepository.GetById(createOrderDto.PostId);
-            if (post?.User?.Id == userId) return Result.Fail(new Error("403"));
-            await _userService.RemovePoint(createOrderDto.UserId);
-            var order = _mapper.Map<Order>(createOrderDto);
-            order.User = user;
-            order.Post = post;
-            _orderRepository.Insert(order);
-            _orderRepository.Save();
-            return Result.Ok();
+            var countOrder = await _orderRepository.GetCountOrderByPostId(createOrderDto.PostId);
+            if (countOrder <= post.LimitOrder)
+            {
+                if (post?.User?.Id == userId) return Result.Fail(new Error("403"));
+                await _userService.RemovePoint(createOrderDto.UserId);
+                var order = _mapper.Map<Order>(createOrderDto);
+                order.User = user;
+                order.Post = post;
+                _orderRepository.Insert(order);
+                _orderRepository.Save();
+                return Result.Ok();
+            }
         }
         catch (Exception)
         {
