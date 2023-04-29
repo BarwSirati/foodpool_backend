@@ -81,6 +81,7 @@ public class PostService : IPostService
         foreach (var p in postList.Where(p => !_orderRepository.ExistOrder(p.Id, userId)))
         {
             var count = await _orderRepository.GetCountOrderByPostId(p.Id);
+            if (count > p.LimitOrder) continue;
             p.CountOrder = count;
             returnPost.Add(p);
         }
