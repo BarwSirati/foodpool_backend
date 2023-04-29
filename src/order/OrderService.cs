@@ -36,17 +36,15 @@ public class OrderService : IOrderService
             var user = await _userRepository.GetById(createOrderDto.UserId);
             var post = await _postRepository.GetById(createOrderDto.PostId);
             var countOrder = await _orderRepository.GetCountOrderByPostId(createOrderDto.PostId);
-            if (countOrder <= post.LimitOrder)
-            {
-                if (post?.User?.Id == userId) return Result.Fail(new Error("403"));
-                await _userService.RemovePoint(createOrderDto.UserId);
-                var order = _mapper.Map<Order>(createOrderDto);
-                order.User = user;
-                order.Post = post;
-                _orderRepository.Insert(order);
-                _orderRepository.Save();
-                return Result.Ok();
-            }
+            if (countOrder > post.LimitOrder) return Result.Fail(new Error("400"));
+            if (post?.User?.Id == userId) return Result.Fail(new Error("403"));
+            await _userService.RemovePoint(createOrderDto.UserId);
+            var order = _mapper.Map<Order>(createOrderDto);
+            order.User = user;
+            order.Post = post;
+            _orderRepository.Insert(order);
+            _orderRepository.Save();
+            return Result.Ok();
         }
         catch (Exception)
         {
