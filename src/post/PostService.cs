@@ -81,12 +81,23 @@ public class PostService : IPostService
         foreach (var p in postList.Where(p => !_orderRepository.ExistOrder(p.Id, userId)))
         {
             var count = await _orderRepository.GetCountOrderByPostId(p.Id);
-            if (count > p.LimitOrder) continue;
+            if (count >= p.LimitOrder)
+            {
+                UpdatePost(new UpdatePostDto { PostStatus = PostStatus.Inactive }, p.Id);
+                continue;
+            }
             p.CountOrder = count;
             returnPost.Add(p);
         }
 
         return Result.Ok(returnPost);
+    }
+    
+    private void UpdatePost(UpdatePostDto updatePostDto, int id)
+    {
+        if (!_postRepository.CheckStatus(id)) return;
+        _postRepository.Update(updatePostDto, id);
+        _postRepository.Save();
     }
 
     public async Task<Result<GetPostDto>> GetById(int id)

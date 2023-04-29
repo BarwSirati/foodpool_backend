@@ -25,6 +25,12 @@ public class PostRepository : IPostRepository
         return posts;
     }
 
+    public bool CheckStatus(int postId)
+    {
+        var post = _dbContext.Post.FirstOrDefault(p => p.Id == postId);
+        return post.PostStatus == PostStatus.Active;
+    }
+
 
     public async Task<List<Post>> GetByUserId(int userId)
     {

@@ -4,6 +4,8 @@ using FoodPool.order.dtos;
 using FoodPool.order.entities;
 using FoodPool.order.enums;
 using FoodPool.order.interfaces;
+using FoodPool.post.dtos;
+using FoodPool.post.enums;
 using FoodPool.post.interfaces;
 using FoodPool.user.interfaces;
 
@@ -38,7 +40,11 @@ public class OrderService : IOrderService
             var user = await _userRepository.GetById(createOrderDto.UserId);
             var post = await _postRepository.GetById(createOrderDto.PostId);
             var countOrder = await _orderRepository.GetCountOrderByPostId(createOrderDto.PostId);
-            if (countOrder > post.LimitOrder) return Result.Fail(new Error("400"));
+            if (countOrder >= post.LimitOrder)
+            {
+                UpdatePost(new UpdatePostDto { PostStatus = PostStatus.Inactive }, post.Id);
+                return Result.Fail(new Error("400"));
+            }
             if (post?.User?.Id == userId) return Result.Fail(new Error("403"));
             await _userService.RemovePoint(createOrderDto.UserId);
             var order = _mapper.Map<Order>(createOrderDto);
@@ -53,8 +59,12 @@ public class OrderService : IOrderService
             return Result.Fail(new Error("400"));
         }
     }
-
-
+    private void UpdatePost(UpdatePostDto updatePostDto, int id)
+    {
+        if (!_postRepository.CheckStatus(id)) return;
+        _postRepository.Update(updatePostDto, id);
+        _postRepository.Save();
+    }
     public async Task<Result<GetOrderDto>> GetById(int id)
     {
         var order = await _orderRepository.GetById(id);
@@ -72,10 +82,9 @@ public class OrderService : IOrderService
     {
         if (!_postRepository.ExistById(postId)) return Result.Fail(new Error("404"));
         var orders = await _orderRepository.GetByPostId(postId);
-        foreach (var order in orders)
+        if (orders.Any(order => order.Post.User.Id != userId))
         {
-            if (order.Post.User.Id != userId)
-                return Result.Fail(new Error("403"));
+            return Result.Fail(new Error("403"));
         }
 
         return Result.Ok(orders.Select(order => _mapper.Map<GetOrderDto>(order)).ToList());
