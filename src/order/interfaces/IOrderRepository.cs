@@ -6,6 +6,10 @@ namespace FoodPool.order.interfaces;
 public interface IOrderRepository
 {
     Task<Order> GetById(int id);
+
+    bool ExistOrder(int postId, int userId);
+
+    Task<int> GetCountOrderByPostId(int postId);
     Task<List<Order>> GetByPostId(int postId);
     Task<List<Order>> GetDeliveredOrderByUserId(int postId);
     Task<List<Order>> GetByUserId(int userId);

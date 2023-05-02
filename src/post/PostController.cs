@@ -27,26 +27,20 @@ public class PostController : ControllerBase
         if (_contextProvider.GetCurrentUser() != createPostDto.UserId) return Forbid();
 
         var post = await _postService.Create(createPostDto);
-        if (post.IsFailed)
+        if (!post.IsFailed) return Ok();
+        return post.Reasons[0].Message switch
         {
-            switch (post.Reasons[0].Message)
-            {
-                case "404":
-                    return NotFound();
-                case "400":
-                    return BadRequest();
-                default:
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-        return Ok();
+            "404" => NotFound(),
+            "400" => BadRequest(),
+            _ => StatusCode(StatusCodes.Status500InternalServerError)
+        };
     }
 
     [HttpGet]
     [Authorize]
     public async Task<ActionResult<List<GetPostDto>>> GetAllPost()
     {
-        var posts = await _postService.GetAll();
+        var posts = await _postService.GetAll(_contextProvider.GetCurrentUser());
         if (posts.Value is null) return NotFound();
 
         return Ok(posts.Value);
@@ -65,33 +59,26 @@ public class PostController : ControllerBase
 
     [HttpGet("user/{id:int}")]
     [Authorize]
-    public async Task<ActionResult<List<GetPostDto>>> GetPostByUserId(int userId)
+    public async Task<ActionResult<List<GetPostDto>>> GetPostByUserId(int id)
     {
-        if (_contextProvider.GetCurrentUser() != userId) return Forbid();
-        var posts = await _postService.GetByUserId(userId);
+        if (_contextProvider.GetCurrentUser() != id) return Forbid();
+        var posts = await _postService.GetByUserId(id);
         if (posts.Value is null) return NotFound();
         return Ok(posts.Value);
     }
 
-    [HttpPut("update/{id:int}")]
+    [HttpPut("{id:int}")]
     [Authorize]
     public async Task<ActionResult<UpdatePostDto>> Update(UpdatePostDto updatePostDto, int id)
     {
-        if (_contextProvider.GetCurrentUser() != id) return Forbid();
-        var post = await _postService.Update(updatePostDto, id);
-        if (post.IsFailed)
+        var post = await _postService.Update(updatePostDto, id,_contextProvider.GetCurrentUser());
+        if (!post.IsFailed) return Ok(post.Value);
+        return post.Reasons[0].Message switch
         {
-            switch (post.Reasons[0].Message)
-            {
-                case "404":
-                    return NotFound();
-                case "400":
-                    return BadRequest();
-                default:
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-
-        return Ok(post.Value);
+            "404" => NotFound(),
+            "400" => BadRequest(),
+            "403" => Forbid(),
+            _ => StatusCode(StatusCodes.Status500InternalServerError)
+        };
     }
 }

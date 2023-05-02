@@ -4,6 +4,8 @@ using FoodPool.order.dtos;
 using FoodPool.order.entities;
 using FoodPool.order.enums;
 using FoodPool.order.interfaces;
+using FoodPool.post.dtos;
+using FoodPool.post.enums;
 using FoodPool.post.interfaces;
 using FoodPool.user.interfaces;
 
@@ -31,10 +33,18 @@ public class OrderService : IOrderService
     {
         try
         {
-            if (!_userRepository.ExistById(createOrderDto.UserId))
-                return Result.Fail(new Error("404"));
+            if (!_userRepository.ExistById(createOrderDto.UserId)) return Result.Fail(new Error("404"));
+            if (!_postRepository.ExistById(createOrderDto.PostId)) return Result.Fail(new Error("404"));
+            if (_orderRepository.ExistOrder(createOrderDto.PostId, createOrderDto.UserId))
+                return Result.Fail(new Error("403"));
             var user = await _userRepository.GetById(createOrderDto.UserId);
             var post = await _postRepository.GetById(createOrderDto.PostId);
+            var countOrder = await _orderRepository.GetCountOrderByPostId(createOrderDto.PostId);
+            if (countOrder >= post.LimitOrder)
+            {
+                UpdatePost(new UpdatePostDto { PostStatus = PostStatus.Inactive }, post.Id);
+                return Result.Fail(new Error("400"));
+            }
             if (post?.User?.Id == userId) return Result.Fail(new Error("403"));
             await _userService.RemovePoint(createOrderDto.UserId);
             var order = _mapper.Map<Order>(createOrderDto);
@@ -49,8 +59,12 @@ public class OrderService : IOrderService
             return Result.Fail(new Error("400"));
         }
     }
-
-
+    private void UpdatePost(UpdatePostDto updatePostDto, int id)
+    {
+        if (!_postRepository.CheckStatus(id)) return;
+        _postRepository.Update(updatePostDto, id);
+        _postRepository.Save();
+    }
     public async Task<Result<GetOrderDto>> GetById(int id)
     {
         var order = await _orderRepository.GetById(id);
@@ -67,9 +81,12 @@ public class OrderService : IOrderService
     public async Task<Result<List<GetOrderDto>>> GetByPostId(int postId, int userId)
     {
         if (!_postRepository.ExistById(postId)) return Result.Fail(new Error("404"));
-        var findOrder = await GetById(postId);
-        if (findOrder.Value.Post.User.Id != userId) return Result.Fail(new Error("403"));
         var orders = await _orderRepository.GetByPostId(postId);
+        if (orders.Any(order => order.Post.User.Id != userId))
+        {
+            return Result.Fail(new Error("403"));
+        }
+
         return Result.Ok(orders.Select(order => _mapper.Map<GetOrderDto>(order)).ToList());
     }
 

@@ -19,20 +19,36 @@ public class OrderRepository : IOrderRepository
     public async Task<Order> GetById(int id)
     {
         var order = await _dbContext.Order.Include(order => order.User).Include(order => order.Post)
+            .Include(order => order.Post.User).Include(order => order.Post.Stall)
             .FirstOrDefaultAsync(o => o.Id == id);
-        return order!;
+        return order;
     }
+
+    public bool ExistOrder(int postId, int userId)
+    {
+        return _dbContext.Order.Any(order => order.Post.Id == postId && order.User.Id == userId);
+    }
+
+    public async Task<int> GetCountOrderByPostId(int postId)
+    {
+        var count = await _dbContext.Order.Where(order => order.Post.Id == postId).CountAsync();
+        return count;
+    }
+
 
     public async Task<List<Order>> GetByPostId(int postId)
     {
         var orders = await _dbContext.Order.Include(order => order.User).Include(order => order.Post)
-            .Where(order => order.Post != null && order.Post.Id == postId).ToListAsync();
+            .Include(order => order.Post.User).Include(order => order.Post.Stall)
+            .Where(order => order.Post.Id == postId).OrderByDescending(order => order.Id)
+            .ToListAsync();
         return orders;
     }
 
     public async Task<List<Order>> GetDeliveredOrderByUserId(int userId)
     {
         var orders = await _dbContext.Order.Include(order => order.User).Include(order => order.Post)
+            .Include(order => order.Post.User).Include(order => order.Post.Stall)
             .Where(order => order.User!.Id == userId && order.Status == OrderStatus.OrderDelivered).ToListAsync();
         return orders;
     }
@@ -40,7 +56,8 @@ public class OrderRepository : IOrderRepository
     public async Task<List<Order>> GetByUserId(int userId)
     {
         var orders = await _dbContext.Order.Include(order => order.User).Include(order => order.Post)
-            .Where(o => o.User!.Id == userId).ToListAsync();
+            .Include(order => order.Post.User).Include(order => order.Post.Stall)
+            .Where(o => o.User!.Id == userId).OrderByDescending(o => o.Id).ToListAsync();
         return orders;
     }
 

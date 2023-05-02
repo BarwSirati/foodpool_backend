@@ -1,6 +1,7 @@
 ﻿using FoodPool.data;
 using FoodPool.post.dtos;
 using FoodPool.post.entities;
+using FoodPool.post.enums;
 using FoodPool.post.interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,22 +16,33 @@ public class PostRepository : IPostRepository
         _dbContext = dbContext;
     }
 
-    public async Task<List<Post>> GetAll()
+    public async Task<List<Post>> GetAll(int userId)
     {
-        var posts = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall).ToListAsync();
+        var posts = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall)
+            .Where(post => post.User.Id != userId && post.PostStatus == PostStatus.Active)
+            .OrderByDescending(o => o.Id)
+            .ToListAsync();
         return posts;
     }
 
+    public bool CheckStatus(int postId)
+    {
+        var post = _dbContext.Post.FirstOrDefault(p => p.Id == postId);
+        return post.PostStatus == PostStatus.Active;
+    }
 
 
     public async Task<List<Post>> GetByUserId(int userId)
     {
-        var posts = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall).ToListAsync();
+        var posts = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall)
+            .Where(post => post.User.Id == userId).ToListAsync();
         return posts;
     }
+
     public async Task<Post> GetById(int id)
     {
-        var post = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall).FirstOrDefaultAsync(o => o.Id == id);
+        var post = await _dbContext.Post.Include(o => o.User).Include(o => o.Stall)
+            .FirstOrDefaultAsync(o => o.Id == id);
         return post!;
     }
 

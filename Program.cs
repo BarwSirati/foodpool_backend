@@ -74,7 +74,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(myAllowSpecificOrigins,
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173", "https://foodpoolapi.bxdman.com").AllowAnyHeader()
+            policy.WithOrigins("http://localhost:5173", "https://foodpool.bxdman.com").AllowAnyHeader()
                 .AllowAnyMethod();
         });
 });

@@ -43,38 +43,25 @@ public class UserController : ControllerBase
     {
         var id = _contextProvider.GetCurrentUser();
         var user = await _userService.GetCurrent(id);
-        if (user.IsFailed)
+        if (!user.IsFailed) return Ok(user.Value);
+        return user.Reasons[0].Message switch
         {
-            switch (user.Reasons[0].Message)
-            {
-                case "404":
-                    return NotFound();
-                default:
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-
-        return Ok(user.Value);
+            "404" => NotFound(),
+            _ => StatusCode(StatusCodes.Status500InternalServerError)
+        };
     }
 
     [HttpPut("{id:int}")]
     public async Task<ActionResult<GetUserDto>> Update(int id, UpdateUserDto updateUserDto)
     {
         var user = await _userService.Update(updateUserDto, id);
-        if (user.IsFailed)
+        if (!user.IsFailed) return Ok(user.Value);
+        return user.Reasons[0].Message switch
         {
-            switch (user.Reasons[0].Message)
-            {
-                case "404":
-                    return NotFound();
-                case "400":
-                    return BadRequest();
-                default:
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-
-        return Ok(user.Value);
+            "404" => NotFound(),
+            "400" => BadRequest(),
+            _ => StatusCode(StatusCodes.Status500InternalServerError)
+        };
     }
 
     [HttpDelete("{id:int}")]

@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using FluentResults;
+using FoodPool.order.entities;
+using FoodPool.order.interfaces;
 using FoodPool.post.dtos;
 using FoodPool.post.entities;
 using FoodPool.post.enums;
@@ -16,13 +18,16 @@ public class PostService : IPostService
     private readonly IMapper _mapper;
     private readonly IUserRepository _userRepository;
     private readonly IStallRepository _stallRepository;
+    private readonly IOrderRepository _orderRepository;
 
-    public PostService(IPostRepository postRepository, IUserRepository userRepository, IMapper mapper, IStallRepository stallRepository)
+    public PostService(IPostRepository postRepository, IUserRepository userRepository, IMapper mapper,
+        IStallRepository stallRepository, IOrderRepository orderRepository)
     {
         _postRepository = postRepository;
         _userRepository = userRepository;
         _mapper = mapper;
         _stallRepository = stallRepository;
+        _orderRepository = orderRepository;
     }
 
     public async Task<Result> Create(CreatePostDto createPostDto)
@@ -46,12 +51,13 @@ public class PostService : IPostService
         }
     }
 
-    public async Task<Result<GetPostDto>> Update(UpdatePostDto updatePostDto, int id)
+    public async Task<Result<GetPostDto>> Update(UpdatePostDto updatePostDto, int id, int userId)
     {
         try
         {
             if (!_postRepository.ExistById(id)) return Result.Fail(new Error("404"));
             var getPost = await _postRepository.GetById(id);
+            if (getPost.User.Id != userId) return Result.Fail(new Error("403"));
             updatePostDto.PostStatus = getPost.PostStatus;
             if (updatePostDto.PostStatus != PostStatus.Active) return Result.Fail(new Error("404"));
             updatePostDto.PostStatus = PostStatus.Inactive;
@@ -64,14 +70,34 @@ public class PostService : IPostService
         {
             return Result.Fail(new Error("400"));
         }
-
     }
 
 
-    public async Task<Result<List<GetPostDto>>> GetAll()
+    public async Task<Result<List<GetPostDto>>> GetAll(int userId)
     {
-        var posts = await _postRepository.GetAll();
-        return Result.Ok(posts.Select(post => _mapper.Map<GetPostDto>(post)).ToList());
+        var posts = await _postRepository.GetAll(userId);
+        var postList = posts.Select(post => _mapper.Map<GetPostDto>(post)).ToList();
+        var returnPost = new List<GetPostDto>();
+        foreach (var p in postList.Where(p => !_orderRepository.ExistOrder(p.Id, userId)))
+        {
+            var count = await _orderRepository.GetCountOrderByPostId(p.Id);
+            if (count >= p.LimitOrder)
+            {
+                UpdatePost(new UpdatePostDto { PostStatus = PostStatus.Inactive }, p.Id);
+                continue;
+            }
+            p.CountOrder = count;
+            returnPost.Add(p);
+        }
+
+        return Result.Ok(returnPost);
+    }
+    
+    private void UpdatePost(UpdatePostDto updatePostDto, int id)
+    {
+        if (!_postRepository.CheckStatus(id)) return;
+        _postRepository.Update(updatePostDto, id);
+        _postRepository.Save();
     }
 
     public async Task<Result<GetPostDto>> GetById(int id)

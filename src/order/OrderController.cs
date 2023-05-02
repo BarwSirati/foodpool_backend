@@ -44,25 +44,18 @@ public class OrderController : ControllerBase
     public async Task<ActionResult<List<GetOrderDto>>> GetByPostId(int id)
     {
         var orders = await _orderService.GetByPostId(id, _contextProvider.GetCurrentUser());
-        if (orders.Value is null) return NotFound();
-        if (orders.IsFailed)
+        if (!orders.IsFailed) return Ok(orders.Value);
+        return orders.Reasons[0].Message switch
         {
-            switch (orders.Reasons[0].Message)
-            {
-                case "403":
-                    return Forbid();
-                case "400":
-                    return BadRequest();
-                default:
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-        return Ok(orders.Value);
+            "403" => Forbid(),
+            "404" => NotFound(),
+            _ => Ok(orders.Value)
+        };
     }
 
     [HttpGet("post/{id:int}/anon")]
     [Authorize]
-    public async Task<ActionResult<List<GetOrderDto>>> GetAnonOrderByPostId(int id)
+    public async Task<ActionResult<List<GetAnonOrderDto>>> GetAnonOrderByPostId(int id)
     {
         var orders = await _orderService.GetAnonOrderByPostId(id);
         if (orders.Value is null) return NotFound();
@@ -84,23 +77,15 @@ public class OrderController : ControllerBase
     public async Task<ActionResult> Create(CreateOrderDto createOrderDto)
     {
         if (_contextProvider.GetCurrentUser() != createOrderDto.UserId) return Forbid();
-        var order = await _orderService.Create(createOrderDto,_contextProvider.GetCurrentUser());
-        if (order.IsFailed)
+        var order = await _orderService.Create(createOrderDto, _contextProvider.GetCurrentUser());
+        if (!order.IsFailed) return Ok();
+        return order.Reasons[0].Message switch
         {
-            switch (order.Reasons[0].Message)
-            {
-                case "404":
-                    return NotFound();
-                case "403":
-                    return Forbid();
-                case "400":
-                    return BadRequest();
-                default:
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-
-        return Ok();
+            "404" => NotFound(),
+            "403" => Forbid(),
+            "400" => BadRequest(),
+            _ => StatusCode(StatusCodes.Status500InternalServerError)
+        };
     }
 
     [HttpPut("post/{id:int}")]
@@ -108,43 +93,29 @@ public class OrderController : ControllerBase
     public async Task<ActionResult<UpdateOrderDto>> UpdateByPostUser(UpdateOrderDto updateOrderDto, int id)
     {
         var order = await _orderService.UpdateByPostUser(updateOrderDto, id, _contextProvider.GetCurrentUser());
-        if (order.IsFailed)
+        if (!order.IsFailed) return Ok(order.Value);
+        return order.Reasons[0].Message switch
         {
-            switch (order.Reasons[0].Message)
-            {
-                case "404":
-                    return NotFound();
-                case "400":
-                    return BadRequest();
-                case "403":
-                    return Forbid();
-                default:
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-        return Ok(order.Value);
+            "404" => NotFound(),
+            "400" => BadRequest(),
+            "403" => Forbid(),
+            _ => StatusCode(StatusCodes.Status500InternalServerError)
+        };
     }
 
-    [HttpPut("order/{id:int}")]
+    [HttpPut("user/{id:int}")]
     [Authorize]
     public async Task<ActionResult<UpdateOrderDto>> UpdateByOrderUser(UpdateOrderDto updateOrderDto, int id)
     {
         if (_contextProvider.GetCurrentUser() != id) return Forbid();
         var order = await _orderService.UpdateByOrderUser(updateOrderDto, id, _contextProvider.GetCurrentUser());
-        if (order.IsFailed)
+        if (!order.IsFailed) return Ok(order.Value);
+        return order.Reasons[0].Message switch
         {
-            switch (order.Reasons[0].Message)
-            {
-                case "404":
-                    return NotFound();
-                case "400":
-                    return BadRequest();
-                case "403":
-                    return Forbid();
-                default:
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-        return Ok(order.Value);
+            "404" => NotFound(),
+            "400" => BadRequest(),
+            "403" => Forbid(),
+            _ => StatusCode(StatusCodes.Status500InternalServerError)
+        };
     }
 }

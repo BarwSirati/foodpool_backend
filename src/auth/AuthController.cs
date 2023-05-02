@@ -23,39 +23,25 @@ public class AuthController : ControllerBase
     public async Task<ActionResult> Register(CreateUserDto createUserDto)
     {
         var user = await _userService.Create(createUserDto);
-        if (user.IsFailed)
+        if (!user.IsFailed) return Ok();
+        return user.Reasons[0].Message switch
         {
-            switch (user.Reasons[0].Message)
-            {
-                case "400":
-                    return BadRequest();
-                case "409":
-                    return Conflict();
-                default:
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-
-        return Ok();
+            "400" => BadRequest(),
+            "409" => Conflict(),
+            _ => StatusCode(StatusCodes.Status500InternalServerError)
+        };
     }
 
     [HttpPost("login")]
     public async Task<ActionResult<TokenDto>> Login(LoginDto loginDto)
     {
         var token = await _authService.Login(loginDto);
-        if (token.IsFailed)
+        if (!token.IsFailed) return Ok(token.Value);
+        return token.Reasons[0].Message switch
         {
-            switch (token.Reasons[0].Message)
-            {
-                case "400":
-                    return BadRequest();
-                case "403":
-                    return Forbid();
-                default:
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-
-        return Ok(token.Value);
+            "400" => BadRequest(),
+            "403" => Forbid(),
+            _ => StatusCode(StatusCodes.Status500InternalServerError)
+        };
     }
 }
