@@ -115,6 +115,7 @@ public class OrderController : ControllerBase
             "404" => NotFound(),
             "400" => BadRequest(),
             "403" => Forbid(),
+            "204" => NoContent(),
             _ => StatusCode(StatusCodes.Status500InternalServerError)
         };
     }

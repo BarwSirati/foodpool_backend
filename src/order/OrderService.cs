@@ -143,7 +143,7 @@ public class OrderService : IOrderService
             if (!_orderRepository.ExistById(id)) return Result.Fail(new Error("404"));
             var findOrder = await GetById(id);
             if (findOrder.Value.Status != OrderStatus.WaitingForConfirmation) return Result.Fail(new Error("403"));
-            if (updateOrderDto.Status != OrderStatus.OrderCancelled) return Result.Fail(new Error("403"));
+            if (updateOrderDto.Status != OrderStatus.OrderCancelled) return Result.Fail(new Error("204"));
             _orderRepository.Update(updateOrderDto, id);
             _orderRepository.Save();
             var order = await GetById(id);
