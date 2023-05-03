@@ -118,8 +118,9 @@ public class OrderService : IOrderService
             var order = await GetById(id);
             return Result.Ok(order.Value);
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Console.WriteLine(e);
             return Result.Fail(new Error("400"));
         }
     }

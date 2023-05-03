@@ -1,6 +1,5 @@
 using FluentResults;
 using FoodPool.order.dtos;
-using Microsoft.AspNetCore.Mvc;
 
 namespace FoodPool.order.interfaces;
 

@@ -1,8 +1,8 @@
 ﻿using FoodPool.post.dtos;
 using FoodPool.post.interfaces;
 using FoodPool.provider.interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FoodPool.post;
 
