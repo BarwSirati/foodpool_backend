@@ -124,6 +124,8 @@ public class OrderService : IOrderService
             if (findOrder.Value.Status.CompareTo(updateOrderDto.Status) == 1) return Result.Fail(new Error("403"));
             if (updateOrderDto.Status == OrderStatus.OrderDelivered)
                 await _userService.AddPoint(userId);
+            if (updateOrderDto.Status == OrderStatus.OrderCancelled)
+                await _userRepository.AddPoint(findOrder.Value.User.Id);
             _orderRepository.Update(updateOrderDto, id);
             _orderRepository.Save();
             var order = await GetById(id);
@@ -143,7 +145,8 @@ public class OrderService : IOrderService
             if (!_orderRepository.ExistById(id)) return Result.Fail(new Error("404"));
             var findOrder = await GetById(id);
             if (findOrder.Value?.User.Id != userId) return Result.Fail(new Error("403"));
-            if (findOrder.Value.Status != OrderStatus.WaitingForConfirmation && updateOrderDto.Status != OrderStatus.OrderCancelled) return Result.Fail(new Error("403"));
+            if (findOrder.Value.Status != OrderStatus.WaitingForConfirmation &&
+                updateOrderDto.Status != OrderStatus.OrderCancelled) return Result.Fail(new Error("403"));
             _orderRepository.Update(updateOrderDto, id);
             _orderRepository.Save();
             var order = await GetById(id);
