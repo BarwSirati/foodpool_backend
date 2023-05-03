@@ -13,4 +13,3 @@ public class OrderMapper : Profile
         CreateMap<Order, GetAnonOrderDto>();
     }
 }
-

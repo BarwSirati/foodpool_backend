@@ -1,9 +1,9 @@
 using FoodPool.data;
+using FoodPool.order.dtos;
 using FoodPool.order.entities;
+using FoodPool.order.enums;
 using FoodPool.order.interfaces;
 using Microsoft.EntityFrameworkCore;
-using FoodPool.order.dtos;
-using FoodPool.order.enums;
 
 namespace FoodPool.order;
 
@@ -22,6 +22,11 @@ public class OrderRepository : IOrderRepository
             .Include(order => order.Post.User).Include(order => order.Post.Stall)
             .FirstOrDefaultAsync(o => o.Id == id);
         return order;
+    }
+
+    public bool ExistOrder(int postId, int userId)
+    {
+        return _dbContext.Order.Any(order => order.Post.Id == postId && order.User.Id == userId);
     }
 
     public async Task<int> GetCountOrderByPostId(int postId)

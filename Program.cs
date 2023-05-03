@@ -74,12 +74,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy(myAllowSpecificOrigins,
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173", "https://foodpool.bxdman.com").AllowAnyHeader()
+            policy.WithOrigins("http://localhost:5173", "https://foodpool.bxdman.com", "https://script.google.com")
+                .AllowAnyHeader()
                 .AllowAnyMethod();
         });
 });
-
-Console.WriteLine();
 
 var app = builder.Build();
 

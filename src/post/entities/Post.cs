@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using FoodPool.post.enums;
-using FoodPool.user.entities;
 using FoodPool.stall.entities;
+using FoodPool.user.entities;
+
 namespace FoodPool.post.entities;
 
 public class Post

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using FluentResults;
-using FoodPool.order.entities;
 using FoodPool.order.interfaces;
 using FoodPool.post.dtos;
 using FoodPool.post.entities;
@@ -8,7 +7,6 @@ using FoodPool.post.enums;
 using FoodPool.post.interfaces;
 using FoodPool.stall.interfaces;
 using FoodPool.user.interfaces;
-
 
 namespace FoodPool.post;
 
@@ -77,13 +75,27 @@ public class PostService : IPostService
     {
         var posts = await _postRepository.GetAll(userId);
         var postList = posts.Select(post => _mapper.Map<GetPostDto>(post)).ToList();
-        foreach (var p in postList)
+        var returnPost = new List<GetPostDto>();
+        foreach (var p in postList.Where(p => !_orderRepository.ExistOrder(p.Id, userId)))
         {
             var count = await _orderRepository.GetCountOrderByPostId(p.Id);
+            if (count >= p.LimitOrder)
+            {
+                UpdatePost(new UpdatePostDto { PostStatus = PostStatus.Inactive }, p.Id);
+                continue;
+            }
             p.CountOrder = count;
+            returnPost.Add(p);
         }
 
-        return Result.Ok(postList);
+        return Result.Ok(returnPost);
+    }
+    
+    private void UpdatePost(UpdatePostDto updatePostDto, int id)
+    {
+        if (!_postRepository.CheckStatus(id)) return;
+        _postRepository.Update(updatePostDto, id);
+        _postRepository.Save();
     }
 
     public async Task<Result<GetPostDto>> GetById(int id)

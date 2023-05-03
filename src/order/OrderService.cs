@@ -4,6 +4,8 @@ using FoodPool.order.dtos;
 using FoodPool.order.entities;
 using FoodPool.order.enums;
 using FoodPool.order.interfaces;
+using FoodPool.post.dtos;
+using FoodPool.post.enums;
 using FoodPool.post.interfaces;
 using FoodPool.user.interfaces;
 
@@ -33,10 +35,17 @@ public class OrderService : IOrderService
         {
             if (!_userRepository.ExistById(createOrderDto.UserId)) return Result.Fail(new Error("404"));
             if (!_postRepository.ExistById(createOrderDto.PostId)) return Result.Fail(new Error("404"));
+            if (_orderRepository.ExistOrder(createOrderDto.PostId, createOrderDto.UserId))
+                return Result.Fail(new Error("403"));
             var user = await _userRepository.GetById(createOrderDto.UserId);
             var post = await _postRepository.GetById(createOrderDto.PostId);
             var countOrder = await _orderRepository.GetCountOrderByPostId(createOrderDto.PostId);
-            if (countOrder > post.LimitOrder) return Result.Fail(new Error("400"));
+            if (countOrder >= post.LimitOrder)
+            {
+                checkCount(post.Id);
+                return Result.Fail(new Error("400"));
+            }
+
             if (post?.User?.Id == userId) return Result.Fail(new Error("403"));
             await _userService.RemovePoint(createOrderDto.UserId);
             var order = _mapper.Map<Order>(createOrderDto);
@@ -44,7 +53,10 @@ public class OrderService : IOrderService
             order.Post = post;
             _orderRepository.Insert(order);
             _orderRepository.Save();
-            return Result.Ok();
+            countOrder += 1;
+            if (countOrder < post.LimitOrder) return Result.Ok();
+            checkCount(post.Id);
+            return Result.Fail(new Error("400"));
         }
         catch (Exception)
         {
@@ -52,6 +64,17 @@ public class OrderService : IOrderService
         }
     }
 
+    private void checkCount(int postId)
+    {
+        UpdatePost(new UpdatePostDto { PostStatus = PostStatus.Inactive }, postId);
+    }
+
+    private void UpdatePost(UpdatePostDto updatePostDto, int id)
+    {
+        if (!_postRepository.CheckStatus(id)) return;
+        _postRepository.Update(updatePostDto, id);
+        _postRepository.Save();
+    }
 
     public async Task<Result<GetOrderDto>> GetById(int id)
     {
@@ -70,10 +93,9 @@ public class OrderService : IOrderService
     {
         if (!_postRepository.ExistById(postId)) return Result.Fail(new Error("404"));
         var orders = await _orderRepository.GetByPostId(postId);
-        foreach (var order in orders)
+        if (orders.Any(order => order.Post.User.Id != userId))
         {
-            if (order.Post.User.Id != userId)
-                return Result.Fail(new Error("403"));
+            return Result.Fail(new Error("403"));
         }
 
         return Result.Ok(orders.Select(order => _mapper.Map<GetOrderDto>(order)).ToList());
@@ -102,13 +124,19 @@ public class OrderService : IOrderService
             if (findOrder.Value.Status.CompareTo(updateOrderDto.Status) == 1) return Result.Fail(new Error("403"));
             if (updateOrderDto.Status == OrderStatus.OrderDelivered)
                 await _userService.AddPoint(userId);
+            if (updateOrderDto.Status == OrderStatus.OrderCancelled)
+                await _userService.AddPoint(findOrder.Value.User.Id);
+            if (findOrder.Value.Status == OrderStatus.OrderDelivered &&
+                updateOrderDto.Status == OrderStatus.OrderCancelled)
+                return Result.Fail(new Error("403"));
             _orderRepository.Update(updateOrderDto, id);
             _orderRepository.Save();
             var order = await GetById(id);
             return Result.Ok(order.Value);
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Console.WriteLine(e);
             return Result.Fail(new Error("400"));
         }
     }
@@ -119,6 +147,7 @@ public class OrderService : IOrderService
         {
             if (!_orderRepository.ExistById(id)) return Result.Fail(new Error("404"));
             var findOrder = await GetById(id);
+            if (findOrder.Value?.User.Id != userId) return Result.Fail(new Error("403"));
             if (findOrder.Value.Status != OrderStatus.WaitingForConfirmation &&
                 updateOrderDto.Status != OrderStatus.OrderCancelled) return Result.Fail(new Error("403"));
             _orderRepository.Update(updateOrderDto, id);

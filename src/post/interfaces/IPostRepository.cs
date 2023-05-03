@@ -6,6 +6,8 @@ namespace FoodPool.post.interfaces;
 public interface IPostRepository
 {
     Task<List<Post>> GetAll(int userId);
+
+    bool CheckStatus(int postId);
     Task<List<Post>> GetByUserId(int userId);
     Task<Post> GetById(int id);
     bool ExistById(int id);

@@ -1,6 +1,6 @@
 ﻿using FoodPool.post.enums;
-using FoodPool.user.dtos;
 using FoodPool.stall.dtos;
+using FoodPool.user.dtos;
 
 namespace FoodPool.post.dtos;
 

@@ -1,6 +1,5 @@
 ﻿using FluentResults;
 using FoodPool.post.dtos;
-using FoodPool.post.enums;
 
 namespace FoodPool.post.interfaces;
 
