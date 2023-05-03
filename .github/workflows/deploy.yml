@@ -2,7 +2,7 @@ name: Deploy Dotnet site to Pages
 
 on:
   push:
-    branches: ["dev"]
+    branches: ["main"]
 
 jobs:
   lintTest:
