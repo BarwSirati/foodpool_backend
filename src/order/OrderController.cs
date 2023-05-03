@@ -107,7 +107,6 @@ public class OrderController : ControllerBase
     [Authorize]
     public async Task<ActionResult<UpdateOrderDto>> UpdateByOrderUser(UpdateOrderDto updateOrderDto, int id)
     {
-        if (_contextProvider.GetCurrentUser() != id) return Forbid();
         var order = await _orderService.UpdateByOrderUser(updateOrderDto, id, _contextProvider.GetCurrentUser());
         if (!order.IsFailed) return Ok(order.Value);
         return order.Reasons[0].Message switch
@@ -115,7 +114,6 @@ public class OrderController : ControllerBase
             "404" => NotFound(),
             "400" => BadRequest(),
             "403" => Forbid(),
-            "204" => NoContent(),
             _ => StatusCode(StatusCodes.Status500InternalServerError)
         };
     }
