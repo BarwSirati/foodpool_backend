@@ -5,6 +5,7 @@ using FoodPool.order.entities;
 using FoodPool.order.enums;
 using FoodPool.order.interfaces;
 using FoodPool.post.dtos;
+using FoodPool.post.entities;
 using FoodPool.post.enums;
 using FoodPool.post.interfaces;
 using FoodPool.user.interfaces;
@@ -42,7 +43,7 @@ public class OrderService : IOrderService
             var countOrder = await _orderRepository.GetCountOrderByPostId(createOrderDto.PostId);
             if (countOrder >= post.LimitOrder)
             {
-                UpdatePost(new UpdatePostDto { PostStatus = PostStatus.Inactive }, post.Id);
+                checkCount(post.Id);
                 return Result.Fail(new Error("400"));
             }
             if (post?.User?.Id == userId) return Result.Fail(new Error("403"));
@@ -52,19 +53,29 @@ public class OrderService : IOrderService
             order.Post = post;
             _orderRepository.Insert(order);
             _orderRepository.Save();
-            return Result.Ok();
+            countOrder += 1;
+            if (countOrder < post.LimitOrder) return Result.Ok();
+            checkCount(post.Id);
+            return Result.Fail(new Error("400"));
         }
         catch (Exception)
         {
             return Result.Fail(new Error("400"));
         }
     }
+
+    private void checkCount(int postId)
+    {
+        UpdatePost(new UpdatePostDto { PostStatus = PostStatus.Inactive }, postId);
+    }
+
     private void UpdatePost(UpdatePostDto updatePostDto, int id)
     {
         if (!_postRepository.CheckStatus(id)) return;
         _postRepository.Update(updatePostDto, id);
         _postRepository.Save();
     }
+
     public async Task<Result<GetOrderDto>> GetById(int id)
     {
         var order = await _orderRepository.GetById(id);

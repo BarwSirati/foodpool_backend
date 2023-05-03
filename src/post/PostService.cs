@@ -35,7 +35,7 @@ public class PostService : IPostService
         try
         {
             if (!_userRepository.ExistById(createPostDto.UserId)) return Result.Fail(new Error("404"));
-            // if (!_stallRepository.ExistById(createPostDto.UserId)) return Result.Fail(new Error("404"));
+            if (!_stallRepository.ExistById(createPostDto.UserId)) return Result.Fail(new Error("404"));
             var user = await _userRepository.GetById(createPostDto.UserId);
             var stall = await _stallRepository.GetById(createPostDto.StallId);
             var post = _mapper.Map<Post>(createPostDto);
