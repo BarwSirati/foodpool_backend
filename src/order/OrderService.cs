@@ -125,7 +125,7 @@ public class OrderService : IOrderService
             if (updateOrderDto.Status == OrderStatus.OrderDelivered)
                 await _userService.AddPoint(userId);
             if (updateOrderDto.Status == OrderStatus.OrderCancelled)
-                await _userRepository.AddPoint(findOrder.Value.User.Id);
+                await _userService.AddPoint(findOrder.Value.User.Id);
             _orderRepository.Update(updateOrderDto, id);
             _orderRepository.Save();
             var order = await GetById(id);
