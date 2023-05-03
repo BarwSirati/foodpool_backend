@@ -45,6 +45,7 @@ public class OrderService : IOrderService
                 checkCount(post.Id);
                 return Result.Fail(new Error("400"));
             }
+
             if (post?.User?.Id == userId) return Result.Fail(new Error("403"));
             await _userService.RemovePoint(createOrderDto.UserId);
             var order = _mapper.Map<Order>(createOrderDto);
@@ -141,8 +142,8 @@ public class OrderService : IOrderService
         {
             if (!_orderRepository.ExistById(id)) return Result.Fail(new Error("404"));
             var findOrder = await GetById(id);
-            if (findOrder.Value.Status != OrderStatus.WaitingForConfirmation &&
-                updateOrderDto.Status != OrderStatus.OrderCancelled) return Result.Fail(new Error("403"));
+            if (findOrder.Value.Status != OrderStatus.WaitingForConfirmation) return Result.Fail(new Error("403"));
+            if (updateOrderDto.Status != OrderStatus.OrderCancelled) return Result.Fail(new Error("403"));
             _orderRepository.Update(updateOrderDto, id);
             _orderRepository.Save();
             var order = await GetById(id);
