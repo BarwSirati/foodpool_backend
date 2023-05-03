@@ -5,7 +5,6 @@ using FoodPool.order.entities;
 using FoodPool.order.enums;
 using FoodPool.order.interfaces;
 using FoodPool.post.dtos;
-using FoodPool.post.entities;
 using FoodPool.post.enums;
 using FoodPool.post.interfaces;
 using FoodPool.user.interfaces;
